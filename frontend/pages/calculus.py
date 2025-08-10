@@ -1,12 +1,17 @@
 import reflex as rx
-from frontend.components.sidebar import sidebar
+from ..components.sidebar import sidebar, SidebarState
+from .. import style
 
-def calculus_page():
+@rx.page(route="/calculus", title="Calculus")
+def calculus_page() -> rx.Component:
     return rx.box(
         sidebar(),
         rx.box(
             rx.heading("Calculus", font_size="2em"),
-            margin_left="250px",
+            rx.text("This is the calculus page. You can add your calculus components here."),
             padding="1em",
+            margin_left=rx.cond(SidebarState.is_collapsed, "60px", "250px"),
+            transition="margin-left 0.3s ease-in-out",
         ),
+        style=style.base_style,
     )
