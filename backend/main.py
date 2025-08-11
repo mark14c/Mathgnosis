@@ -1,15 +1,34 @@
 from fastapi import FastAPI
-from backend.routes import calculator, complex, matrices, vectors, calculus, discrete_maths, statistics, probability, history, settings
+from fastapi.middleware.cors import CORSMiddleware
+from backend.routes import (
+    calculator, complex, matrices, vectors, calculus, discrete_maths, 
+    statistics, probability, history, settings, equations, graphs, unit_converter
+)
 
 app = FastAPI()
 
-app.include_router(calculator.router)
-app.include_router(complex.router)
-app.include_router(matrices.router)
-app.include_router(vectors.router)
-app.include_router(calculus.router)
-app.include_router(discrete_maths.router)
-app.include_router(statistics.router)
-app.include_router(probability.router)
-app.include_router(history.router)
-app.include_router(settings.router)
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.include_router(calculator.router, prefix="/api")
+app.include_router(complex.router, prefix="/api")
+app.include_router(matrices.router, prefix="/api")
+app.include_router(vectors.router, prefix="/api")
+app.include_router(calculus.router, prefix="/api")
+app.include_router(discrete_maths.router, prefix="/api")
+app.include_router(statistics.router, prefix="/api")
+app.include_router(probability.router, prefix="/api")
+app.include_router(history.router, prefix="/api")
+app.include_router(settings.router, prefix="/api")
+app.include_router(equations.router, prefix="/api")
+app.include_router(graphs.router, prefix="/api")
+app.include_router(unit_converter.router, prefix="/api")

@@ -10,6 +10,9 @@ from frontend.pages.statistics import statistics_page
 from frontend.pages.probability import probability_page
 from frontend.pages.history import history_page
 from frontend.pages.settings import settings_page
+from frontend.pages.equations import equations_page
+from frontend.pages.graphs import graphs_page
+from frontend.pages.unit_conversion import unit_conversion_page
 
 class State(rx.State):
     """The app state."""
@@ -37,3 +40,6 @@ app.add_page(statistics_page, route="/statistics")
 app.add_page(probability_page, route="/probability")
 app.add_page(history_page, route="/history")
 app.add_page(settings_page, route="/settings")
+app.add_page(equations_page, route="/equations")
+app.add_page(graphs_page, route="/graphs")
+app.add_page(unit_conversion_page, route="/unit_conversion")
