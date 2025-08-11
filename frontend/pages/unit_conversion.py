@@ -1,6 +1,7 @@
 import reflex as rx
 from ..components.sidebar import sidebar, SidebarState
 from .. import style
+from ..components.page_layout import template
 import httpx
 
 class UnitConverterState(rx.State):
@@ -69,46 +70,36 @@ class UnitConverterState(rx.State):
     def get_conversion(self):
         return rx.background(self._get_conversion)
 
+@rx.page(route="/unit_conversion", title="Unit Converter", on_load=UnitConverterState.on_load)
 def unit_conversion_page() -> rx.Component:
-    return rx.box(
-        sidebar(),
-        rx.box(
-            rx.heading("Unit Converter", font_size="2em", margin_bottom="1em"),
-            rx.card(
+    content = rx.card(
+        rx.vstack(
+            rx.heading("Select Category", size="md"),
+            rx.select(UnitConverterState.categories, value=UnitConverterState.selected_category, on_change=UnitConverterState.on_category_change),
+            rx.hstack(
                 rx.vstack(
-                    rx.heading("Select Category", size="md"),
-                    rx.select(UnitConverterState.categories, value=UnitConverterState.selected_category, on_change=UnitConverterState.on_category_change),
-                    rx.hstack(
-                        rx.vstack(
-                            rx.text("From"),
-                            rx.input(value=UnitConverterState.input_value, on_change=UnitConverterState.set_input_value, on_blur=UnitConverterState.get_conversion),
-                            rx.select(UnitConverterState.current_units, value=UnitConverterState.from_unit, on_change=UnitConverterState.set_from_unit),
-                            width="100%",
-                        ),
-                        rx.vstack(
-                            rx.text("To"),
-                            rx.heading(UnitConverterState.result, size="lg"),
-                            rx.select(UnitConverterState.current_units, value=UnitConverterState.to_unit, on_change=UnitConverterState.set_to_unit),
-                            width="100%",
-                            align_items="end",
-                        ),
-                        align_items="end",
-                        width="100%",
-                        spacing="6",
-                    ),
-                    rx.cond(
-                        UnitConverterState.error_message,
-                        rx.callout.root(rx.callout.icon(rx.icon("alert-triangle")), rx.callout.text(UnitConverterState.error_message), color_scheme="red"),
-                    ),
+                    rx.text("From"),
+                    rx.input(value=UnitConverterState.input_value, on_change=UnitConverterState.set_input_value, on_blur=UnitConverterState.get_conversion, style=style.input_style),
+                    rx.select(UnitConverterState.current_units, value=UnitConverterState.from_unit, on_change=UnitConverterState.set_from_unit),
                     width="100%",
-                    spacing="4",
-                )
+                ),
+                rx.vstack(
+                    rx.text("To"),
+                    rx.heading(UnitConverterState.result, size="lg"),
+                    rx.select(UnitConverterState.current_units, value=UnitConverterState.to_unit, on_change=UnitConverterState.set_to_unit),
+                    width="100%",
+                    align_items="end",
+                ),
+                align_items="end",
+                width="100%",
+                spacing="6",
             ),
-            padding="1em",
-            margin_left=rx.cond(SidebarState.is_collapsed, "60px", "250px"),
-            transition="margin-left 0.3s ease-in-out",
+            rx.cond(
+                UnitConverterState.error_message,
+                rx.callout.root(rx.callout.icon(rx.icon("alert-triangle")), rx.callout.text(UnitConverterState.error_message), color_scheme="red"),
+            ),
             width="100%",
-        ),
-        on_mount=UnitConverterState.on_load,
-        style=style.base_style,
+            spacing="4",
+        )
     )
+    return template(title="Unit Converter", content=content)

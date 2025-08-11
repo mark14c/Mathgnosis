@@ -1,6 +1,7 @@
 import reflex as rx
 from ..components.sidebar import sidebar, SidebarState
 from .. import style
+from ..components.page_layout import template
 import httpx
 import json
 
@@ -80,61 +81,54 @@ class StatisticsState(rx.State):
 def create_card(*children, **props):
     return rx.card(rx.vstack(*children, spacing="3", align_items="start"), **props)
 
+@rx.page(route="/statistics", title="Statistics")
 def statistics_page() -> rx.Component:
-    return rx.box(
-        sidebar(),
-        rx.box(
-            rx.heading("Statistics", font_size="2em", margin_bottom="1em"),
-            rx.tabs.root(
-                rx.tabs.list(
-                    rx.tabs.trigger("Descriptive Statistics", value="desc"),
-                    rx.tabs.trigger("Predictive Statistics", value="pred"),
-                ),
-                # Descriptive Statistics Tab
-                rx.tabs.content(
-                    create_card(
-                        rx.heading("Data Input", size="md"),
-                        rx.text("Enter comma-separated numerical data."),
-                        rx.text_area(placeholder="Primary Dataset", value=StatisticsState.desc_data1, on_change=StatisticsState.set_desc_data1),
-                        rx.text_area(placeholder="Second Dataset (for Concordance)", value=StatisticsState.desc_data2, on_change=StatisticsState.set_desc_data2),
-                        rx.button("Calculate", on_click=StatisticsState.get_descriptive_stats),
-                        rx.heading("Results", size="md", margin_top="1em"),
-                        rx.code_block(StatisticsState.desc_result, width="100%"),
-                    ), value="desc"
-                ),
-                # Predictive Statistics Tab
-                rx.tabs.content(
-                    create_card(
-                        rx.heading("Model Selection", size="md"),
-                        rx.select(REGRESSION_MODELS, value=StatisticsState.pred_model, on_change=StatisticsState.set_pred_model),
-                        rx.heading("Data Input", size="md", margin_top="1em"),
-                        rx.text("X (Independent Vars): One observation per line. Use commas for multiple variables."),
-                        rx.text_area(placeholder="X Data", value=StatisticsState.pred_x_data, on_change=StatisticsState.set_pred_x_data, height="150px"),
-                        rx.text("Y (Dependent Var): Comma-separated."),
-                        rx.text_area(placeholder="Y Data", value=StatisticsState.pred_y_data, on_change=StatisticsState.set_pred_y_data, height="80px"),
-                        
-                        rx.cond(StatisticsState.pred_model == "polynomial",
-                            rx.input(placeholder="Polynomial Degree", value=StatisticsState.pred_poly_degree, on_change=StatisticsState.set_pred_poly_degree)
-                        ),
-                        rx.cond((StatisticsState.pred_model == "lasso") | (StatisticsState.pred_model == "ridge"),
-                            rx.input(placeholder="Alpha", value=StatisticsState.pred_alpha, on_change=StatisticsState.set_pred_alpha)
-                        ),
-                        
-                        rx.button("Run Regression", on_click=StatisticsState.run_regression, margin_top="1em"),
-                        rx.heading("Model Results", size="md", margin_top="1em"),
-                        rx.code_block(StatisticsState.pred_result, width="100%"),
-                    ), value="pred"
-                ),
-                defaultValue="desc",
+    content = rx.vstack(
+        rx.tabs.root(
+            rx.tabs.list(
+                rx.tabs.trigger("Descriptive Statistics", value="desc"),
+                rx.tabs.trigger("Predictive Statistics", value="pred"),
             ),
-            rx.cond(
-                StatisticsState.error_message,
-                rx.callout.root(rx.callout.icon(rx.icon("alert-triangle")), rx.callout.text(StatisticsState.error_message), color_scheme="red", role="alert"),
+            # Descriptive Statistics Tab
+            rx.tabs.content(
+                create_card(
+                    rx.heading("Data Input", size="md"),
+                    rx.text("Enter comma-separated numerical data."),
+                    rx.text_area(placeholder="Primary Dataset", value=StatisticsState.desc_data1, on_change=StatisticsState.set_desc_data1, style=style.textarea_style),
+                    rx.text_area(placeholder="Second Dataset (for Concordance)", value=StatisticsState.desc_data2, on_change=StatisticsState.set_desc_data2, style=style.textarea_style),
+                    rx.button("Calculate", on_click=StatisticsState.get_descriptive_stats, style=style.button_style),
+                    rx.heading("Results", size="md", margin_top="1em"),
+                    rx.code_block(StatisticsState.desc_result, width="100%"),
+                ), value="desc"
             ),
-            padding="1em",
-            margin_left=rx.cond(SidebarState.is_collapsed, "60px", "250px"),
-            transition="margin-left 0.3s ease-in-out",
-            width="100%",
+            # Predictive Statistics Tab
+            rx.tabs.content(
+                create_card(
+                    rx.heading("Model Selection", size="md"),
+                    rx.select(REGRESSION_MODELS, value=StatisticsState.pred_model, on_change=StatisticsState.set_pred_model),
+                    rx.heading("Data Input", size="md", margin_top="1em"),
+                    rx.text("X (Independent Vars): One observation per line. Use commas for multiple variables."),
+                    rx.text_area(placeholder="X Data", value=StatisticsState.pred_x_data, on_change=StatisticsState.set_pred_x_data, height="150px", style=style.textarea_style),
+                    rx.text("Y (Dependent Var): Comma-separated."),
+                    rx.text_area(placeholder="Y Data", value=StatisticsState.pred_y_data, on_change=StatisticsState.set_pred_y_data, height="80px", style=style.textarea_style),
+                    
+                    rx.cond(StatisticsState.pred_model == "polynomial",
+                        rx.input(placeholder="Polynomial Degree", value=StatisticsState.pred_poly_degree, on_change=StatisticsState.set_pred_poly_degree, style=style.input_style)
+                    ),
+                    rx.cond((StatisticsState.pred_model == "lasso") | (StatisticsState.pred_model == "ridge"),
+                        rx.input(placeholder="Alpha", value=StatisticsState.pred_alpha, on_change=StatisticsState.set_pred_alpha, style=style.input_style)
+                    ),
+                    
+                    rx.button("Run Regression", on_click=StatisticsState.run_regression, margin_top="1em", style=style.button_style),
+                    rx.heading("Model Results", size="md", margin_top="1em"),
+                    rx.code_block(StatisticsState.pred_result, width="100%"),
+                ), value="pred"
+            ),
+            defaultValue="desc",
         ),
-        style=style.base_style,
+        rx.cond(
+            StatisticsState.error_message,
+            rx.callout.root(rx.callout.icon(rx.icon("alert-triangle")), rx.callout.text(StatisticsState.error_message), color_scheme="red", role="alert"),
+        ),
     )
+    return template(title="Statistics", content=content)

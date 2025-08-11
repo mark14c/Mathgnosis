@@ -1,9 +1,13 @@
 import reflex as rx
 from ..components.sidebar import sidebar, SidebarState
 from .. import style
+from ..components.page_layout import template
 from typing import List
+import plotly.graph_objects as go
+import numpy as np
+import sympy as sp
 
-PLOT_COLORS = ["#636EFA", "#EF553B", "#00CC96", "#AB63FA", "#FFA15A", "#19D3F3"]
+PLOT_COLORS = ["#636EFA", "#EF553B", "#00CC96", "#AB63FA", "#FFA15A", "#19D3F3", "#FF6692"]
 
 class GraphingState(rx.State):
     # --- 2D Graphing ---
@@ -35,9 +39,6 @@ class GraphingState(rx.State):
     # --- Computed Properties for Live-Updating Graphs ---
     @rx.var
     def figure_2d(self) -> go.Figure:
-        import plotly.graph_objects as go
-        import numpy as np
-        import sympy as sp
         fig = go.Figure()
         x_vals = np.linspace(-10, 10, 400)
         x = sp.symbols('x')
@@ -59,9 +60,6 @@ class GraphingState(rx.State):
 
     @rx.var
     def figure_3d(self) -> go.Figure:
-        import plotly.graph_objects as go
-        import numpy as np
-        import sympy as sp
         fig = go.Figure()
         x_range = np.linspace(-5, 5, 50)
         y_range = np.linspace(-5, 5, 50)
@@ -82,78 +80,71 @@ class GraphingState(rx.State):
         fig.update_layout(title="3D Graph", scene=dict(xaxis_title="x", yaxis_title="y", zaxis_title="z"))
         return fig
 
+@rx.page(route="/graphs", title="Interactive Graphing")
 def graphs_page() -> rx.Component:
-    return rx.box(
-        sidebar(),
-        rx.box(
-            rx.heading("Interactive Graphing", font_size="2em", margin_bottom="1em"),
-            rx.tabs.root(
-                rx.tabs.list(
-                    rx.tabs.trigger("2D Graphs", value="2d"),
-                    rx.tabs.trigger("3D Graphs", value="3d"),
-                ),
-                # 2D Graphing Tab
-                rx.tabs.content(
-                    rx.hstack(
-                        rx.vstack(
-                            rx.heading("Equations (y = f(x))", size="md"),
-                            rx.foreach(
-                                rx.Var.range(len(GraphingState.equations_2d)),
-                                lambda i: rx.hstack(
-                                    rx.input(
-                                        placeholder="e.g., x**2",
-                                        value=GraphingState.equations_2d[i],
-                                        on_change=lambda val: GraphingState.update_equation_2d(i, val),
-                                        width="100%",
-                                    ),
-                                    rx.button("X", on_click=lambda: GraphingState.remove_equation_2d(i), color_scheme="red"),
-                                )
-                            ),
-                            rx.button("Add Equation", on_click=GraphingState.add_equation_2d, margin_top="1em"),
-                            align_items="start",
-                            spacing="3",
-                            width="30%",
-                        ),
-                        rx.plotly(data=GraphingState.figure_2d, layout={}, width="70%", height="500px"),
-                        spacing="6",
-                        width="100%",
-                    ),
-                    value="2d",
-                ),
-                # 3D Graphing Tab
-                rx.tabs.content(
-                    rx.hstack(
-                        rx.vstack(
-                            rx.heading("Equations (z = f(x, y))", size="md"),
-                            rx.foreach(
-                                rx.Var.range(len(GraphingState.equations_3d)),
-                                lambda i: rx.hstack(
-                                    rx.input(
-                                        placeholder="e.g., sin(x*y)",
-                                        value=GraphingState.equations_3d[i],
-                                        on_change=lambda val: GraphingState.update_equation_3d(i, val),
-                                        width="100%",
-                                    ),
-                                    rx.button("X", on_click=lambda: GraphingState.remove_equation_3d(i), color_scheme="red"),
-                                )
-                            ),
-                            rx.button("Add Equation", on_click=GraphingState.add_equation_3d, margin_top="1em"),
-                            align_items="start",
-                            spacing="3",
-                            width="30%",
-                        ),
-                        rx.plotly(data=GraphingState.figure_3d, layout={}, width="70%", height="500px"),
-                        spacing="6",
-                        width="100%",
-                    ),
-                    value="3d",
-                ),
-                defaultValue="2d",
-            ),
-            padding="1em",
-            margin_left=rx.cond(SidebarState.is_collapsed, "60px", "250px"),
-            transition="margin-left 0.3s ease-in-out",
-            width="100%",
+    content = rx.tabs.root(
+        rx.tabs.list(
+            rx.tabs.trigger("2D Graphs", value="2d"),
+            rx.tabs.trigger("3D Graphs", value="3d"),
         ),
-        style=style.base_style,
+        # 2D Graphing Tab
+        rx.tabs.content(
+            rx.hstack(
+                rx.vstack(
+                    rx.heading("Equations (y = f(x))", size="md"),
+                    rx.foreach(
+                        rx.Var.range(len(GraphingState.equations_2d)),
+                        lambda i: rx.hstack(
+                            rx.input(
+                                placeholder="e.g., x**2",
+                                value=GraphingState.equations_2d[i],
+                                on_change=lambda val: GraphingState.update_equation_2d(i, val),
+                                width="100%",
+                                style=style.input_style
+                            ),
+                            rx.button("X", on_click=lambda: GraphingState.remove_equation_2d(i), color_scheme="red", style=style.button_style),
+                        )
+                    ),
+                    rx.button("Add Equation", on_click=GraphingState.add_equation_2d, margin_top="1em", style=style.button_style),
+                    align_items="start",
+                    spacing="3",
+                    width="30%",
+                ),
+                rx.plotly(data=GraphingState.figure_2d, layout={}, width="70%", height="500px"),
+                spacing="6",
+                width="100%",
+            ),
+            value="2d",
+        ),
+        # 3D Graphing Tab
+        rx.tabs.content(
+            rx.hstack(
+                rx.vstack(
+                    rx.heading("Equations (z = f(x, y))", size="md"),
+                    rx.foreach(
+                        rx.Var.range(len(GraphingState.equations_3d)),
+                        lambda i: rx.hstack(
+                            rx.input(
+                                placeholder="e.g., sin(x*y)",
+                                value=GraphingState.equations_3d[i],
+                                on_change=lambda val: GraphingState.update_equation_3d(i, val),
+                                width="100%",
+                                style=style.input_style
+                            ),
+                            rx.button("X", on_click=lambda: GraphingState.remove_equation_3d(i), color_scheme="red", style=style.button_style),
+                        )
+                    ),
+                    rx.button("Add Equation", on_click=GraphingState.add_equation_3d, margin_top="1em", style=style.button_style),
+                    align_items="start",
+                    spacing="3",
+                    width="30%",
+                ),
+                rx.plotly(data=GraphingState.figure_3d, layout={}, width="70%", height="500px"),
+                spacing="6",
+                width="100%",
+            ),
+            value="3d",
+        ),
+        defaultValue="2d",
     )
+    return template(title="Interactive Graphing", content=content)

@@ -1,6 +1,7 @@
 import reflex as rx
 from ..components.sidebar import sidebar, SidebarState
 from .. import style
+from ..components.page_layout import template
 import httpx
 import json
 
@@ -59,6 +60,7 @@ class MatricesState(rx.State):
     def calculate(self):
         return rx.background(self._calculate)
 
+@rx.page(route="/matrices", title="Matrices")
 def matrices_page() -> rx.Component:
     operations = [
         "add", "subtract", "multiply", "dot_product", "transpose", "adjoint", 
@@ -66,70 +68,62 @@ def matrices_page() -> rx.Component:
         "range_space", "eigen", "norm", "exponentiation"
     ]
     
-    return rx.box(
-        sidebar(),
-        rx.box(
-            rx.heading("Matrices", font_size="2em", margin_bottom="1em"),
-            rx.vstack(
-                rx.heading("Define Matrices", size="lg"),
-                rx.text("Enter each matrix with commas separating values and new lines separating rows."),
-                rx.foreach(
-                    rx.Var.range(len(MatricesState.matrix_inputs)),
-                    lambda i: rx.hstack(
-                        rx.text_area(
-                            placeholder=f"Matrix {chr(65+i)}",
-                            value=MatricesState.matrix_inputs[i],
-                            on_change=lambda val: MatricesState.handle_matrix_input(val, i),
-                            height="120px",
-                            width="250px",
-                        ),
-                        rx.button("X", on_click=lambda: MatricesState.remove_matrix(i), size="1", color_scheme="red"),
-                        align="center",
-                    )
+    content = rx.vstack(
+        rx.heading("Define Matrices", size="lg"),
+        rx.text("Enter each matrix with commas separating values and new lines separating rows."),
+        rx.foreach(
+            rx.Var.range(len(MatricesState.matrix_inputs)),
+            lambda i: rx.hstack(
+                rx.text_area(
+                    placeholder=f"Matrix {chr(65+i)}",
+                    value=MatricesState.matrix_inputs[i],
+                    on_change=lambda val: MatricesState.handle_matrix_input(val, i),
+                    height="120px",
+                    width="250px",
+                    style=style.textarea_style
                 ),
-                rx.button("Add Matrix", on_click=MatricesState.add_matrix, margin_top="0.5em"),
-                
-                rx.heading("Select Operation", size="lg", margin_top="1.5em"),
-                rx.select(
-                    operations,
-                    default_value="add",
-                    on_change=MatricesState.set_operation,
-                ),
-                rx.cond(
-                    MatricesState.operation == "scalar_multiply",
-                    rx.input(
-                        placeholder="Scalar Value",
-                        value=MatricesState.scalar_input,
-                        on_change=MatricesState.set_scalar_input,
-                        margin_top="0.5em",
-                    )
-                ),
-                rx.button("Calculate", on_click=MatricesState.calculate, margin_top="1em", size="3"),
-                
-                rx.heading("Result", size="lg", margin_top="1.5em"),
-                rx.cond(
-                    MatricesState.error_message,
-                    rx.callout.root(
-                        rx.callout.icon(rx.icon("alert-triangle")),
-                        rx.callout.text(MatricesState.error_message),
-                        color_scheme="red", role="alert",
-                    ),
-                ),
-                rx.code_block(
-                    MatricesState.result,
-                    language="json",
-                    width="100%",
-                    max_height="400px",
-                    overflow="auto",
-                ),
-                width="100%",
-                spacing="4",
-                align_items="start",
-            ),
-            padding="1em",
-            margin_left=rx.cond(SidebarState.is_collapsed, "60px", "250px"),
-            transition="margin-left 0.3s ease-in-out",
-            width="100%",
+                rx.button("X", on_click=lambda: MatricesState.remove_matrix(i), size="1", color_scheme="red", style=style.button_style),
+                align="center",
+            )
         ),
-        style=style.base_style,
+        rx.button("Add Matrix", on_click=MatricesState.add_matrix, margin_top="0.5em", style=style.button_style),
+        
+        rx.heading("Select Operation", size="lg", margin_top="1.5em"),
+        rx.select(
+            operations,
+            default_value="add",
+            on_change=MatricesState.set_operation,
+        ),
+        rx.cond(
+            MatricesState.operation == "scalar_multiply",
+            rx.input(
+                placeholder="Scalar Value",
+                value=MatricesState.scalar_input,
+                on_change=MatricesState.set_scalar_input,
+                margin_top="0.5em",
+                style=style.input_style
+            )
+        ),
+        rx.button("Calculate", on_click=MatricesState.calculate, margin_top="1em", size="3", style=style.button_style),
+        
+        rx.heading("Result", size="lg", margin_top="1.5em"),
+        rx.cond(
+            MatricesState.error_message,
+            rx.callout.root(
+                rx.callout.icon(rx.icon("alert-triangle")),
+                rx.callout.text(MatricesState.error_message),
+                color_scheme="red", role="alert",
+            ),
+        ),
+        rx.code_block(
+            MatricesState.result,
+            language="json",
+            width="100%",
+            max_height="400px",
+            overflow="auto",
+        ),
+        width="100%",
+        spacing="4",
+        align_items="start",
     )
+    return template(title="Matrices", content=content)
