@@ -12,6 +12,17 @@ base_style = {
     "background_color": PRIMARY_COLOR,
 }
 
+# App icon style
+app_icon_style = {
+    "border_radius": "15px",
+    "border": "3px solid",
+    "border_image": "linear-gradient(45deg, #00BFFF, #1E90FF, #0000FF) 1",
+    "box_shadow": "0 4px 8px 0 rgba(0,0,0,0.2)",
+    "width": "50px",
+    "height": "50px",
+    "margin_bottom": "1em",
+}
+
 # Card styles
 card_style = {
     "background_color": SECONDARY_COLOR,

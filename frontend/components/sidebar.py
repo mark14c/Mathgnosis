@@ -1,5 +1,5 @@
 import reflex as rx
-from frontend.style import PRIMARY_COLOR
+from frontend.style import PRIMARY_COLOR, app_icon_style
 
 class SidebarState(rx.State):
     """The state for the sidebar."""
@@ -31,6 +31,7 @@ def sidebar():
     return rx.box(
         rx.vstack(
             rx.hstack(
+                rx.image(src="/app_icon.png", style=app_icon_style),
                 rx.heading("Mathgnosis", size="5", color="black"),
                 rx.spacer(),
                 rx.button(
@@ -45,22 +46,60 @@ def sidebar():
             rx.divider(),
             rx.cond(
                 ~SidebarState.is_collapsed,
-                rx.vstack(
-                    sidebar_item("Calculator", "/calculator", "calculator"),
-                    sidebar_item("Complex Numbers", "/complex", "blending_mode"),
-                    sidebar_item("Matrices", "/matrices", "grid"),
-                    sidebar_item("Vectors", "/vectors", "arrow_right"),
-                    sidebar_item("Calculus", "/calculus", "function"),
-                    sidebar_item("Discrete Maths", "/discrete_maths", "component_1"),
-                    sidebar_item("Statistics", "/statistics", "bar_chart"),
-                    sidebar_item("Probability", "/probability", "pie_chart"),
-                    sidebar_item("Equations", "/equations", "equal_to"),
-                    sidebar_item("Graphs", "/graphs", "activity_log"),
-                    sidebar_item("Unit Conversion", "/unit_conversion", "file_ruler"),
-                    sidebar_item("History", "/history", "archive"),
-                    sidebar_item("Settings", "/settings", "gear"),
-                    spacing="2",
-                    align_items="flex-start",
+                rx.accordion.root(
+                    rx.accordion.item(
+                        header=rx.accordion.trigger(
+                            rx.hstack(
+                                rx.icon(tag="calculator", size=20),
+                                rx.text("Core Math", size="3"),
+                            ),
+                            width="100%",
+                        ),
+                        content=rx.vstack(
+                            sidebar_item("Calculator", "/calculator", "calculator"),
+                            sidebar_item("Equations", "/equations", "equal_to"),
+                            sidebar_item("Graphs", "/graphs", "activity_log"),
+                            align_items="flex-start",
+                            width="100%",
+                        ),
+                    ),
+                    rx.accordion.item(
+                        header=rx.accordion.trigger(
+                            rx.hstack(
+                                rx.icon(tag="function", size=20),
+                                rx.text("Advanced Math", size="3"),
+                            ),
+                            width="100%",
+                        ),
+                        content=rx.vstack(
+                            sidebar_item("Complex Numbers", "/complex", "blending_mode"),
+                            sidebar_item("Matrices", "/matrices", "grid"),
+                            sidebar_item("Vectors", "/vectors", "arrow_right"),
+                            sidebar_item("Calculus", "/calculus", "function"),
+                            sidebar_item("Discrete Maths", "/discrete_maths", "component_1"),
+                            sidebar_item("Statistics", "/statistics", "bar_chart"),
+                            sidebar_item("Probability", "/probability", "pie_chart"),
+                            align_items="flex-start",
+                            width="100%",
+                        ),
+                    ),
+                    rx.accordion.item(
+                        header=rx.accordion.trigger(
+                            rx.hstack(
+                                rx.icon(tag="wrench", size=20),
+                                rx.text("Tools", size="3"),
+                            ),
+                            width="100%",
+                        ),
+                        content=rx.vstack(
+                            sidebar_item("Unit Conversion", "/unit_conversion", "file_ruler"),
+                            sidebar_item("History", "/history", "archive"),
+                            sidebar_item("Settings", "/settings", "gear"),
+                            align_items="flex-start",
+                            width="100%",
+                        ),
+                    ),
+                    collapsible=True,
                     width="100%",
                 ),
             ),
@@ -73,7 +112,7 @@ def sidebar():
         top="0px",
         z_index="5",
         h="100%",
-        width=rx.cond(SidebarState.is_collapsed, "60px", "250px"),
+        width=rx.cond(SidebarState.is_collapsed, "80px", "250px"),
         p="4",
         bg=PRIMARY_COLOR,
         box_shadow="2px 0 5px rgba(0, 0, 0, 0.1)",
