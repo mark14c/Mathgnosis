@@ -66,7 +66,7 @@ def sidebar():
                     rx.accordion.item(
                         header=rx.accordion.trigger(
                             rx.hstack(
-                                rx.icon(tag="function-square", size=20),
+                                rx.icon(tag="square_function", size=20),
                                 rx.text("Advanced Math", size="3"),
                             ),
                             width="100%",

@@ -123,7 +123,7 @@ def complex_page() -> rx.Component:
                 rx.vstack(
                     rx.heading("Complex Number Arithmetic", size="5"),
                     rx.text("Enter complex numbers separated by commas."),
-                    rx.textarea(
+                    rx.text_area(
                         placeholder="e.g., 1+2j, 3-4j, 5+6j",
                         on_change=ComplexState.set_complex_numbers_input,
                         width="100%",
