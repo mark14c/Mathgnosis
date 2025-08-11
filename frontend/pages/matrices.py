@@ -24,8 +24,7 @@ class MatricesState(rx.State):
     def _parse_matrix(self, matrix_str: str) -> list[list[float]]:
         return [[float(n.strip()) for n in row.split(',')] for row in matrix_str.strip().split('\n')]
 
-    @rx.background
-    async def calculate(self):
+    async def _calculate(self):
         async with self:
             self.error_message = ""
             self.result = ""
@@ -56,6 +55,9 @@ class MatricesState(rx.State):
 
             except Exception as e:
                 self.error_message = f"Invalid input format or calculation error: {e}"
+
+    def calculate(self):
+        return rx.background(self._calculate)
 
 def matrices_page() -> rx.Component:
     operations = [

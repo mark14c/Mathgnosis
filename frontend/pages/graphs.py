@@ -1,9 +1,6 @@
 import reflex as rx
 from ..components.sidebar import sidebar, SidebarState
 from .. import style
-import plotly.graph_objects as go
-import numpy as np
-import sympy as sp
 from typing import List
 
 PLOT_COLORS = ["#636EFA", "#EF553B", "#00CC96", "#AB63FA", "#FFA15A", "#19D3F3"]
@@ -38,6 +35,9 @@ class GraphingState(rx.State):
     # --- Computed Properties for Live-Updating Graphs ---
     @rx.var
     def figure_2d(self) -> go.Figure:
+        import plotly.graph_objects as go
+        import numpy as np
+        import sympy as sp
         fig = go.Figure()
         x_vals = np.linspace(-10, 10, 400)
         x = sp.symbols('x')
@@ -59,6 +59,9 @@ class GraphingState(rx.State):
 
     @rx.var
     def figure_3d(self) -> go.Figure:
+        import plotly.graph_objects as go
+        import numpy as np
+        import sympy as sp
         fig = go.Figure()
         x_range = np.linspace(-5, 5, 50)
         y_range = np.linspace(-5, 5, 50)

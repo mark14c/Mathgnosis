@@ -71,8 +71,7 @@ class ProbabilityState(rx.State):
         self.joint_table[r][c] = value
 
     # --- API Calls ---
-    @rx.background
-    async def run_dist_calc(self):
+    async def _run_dist_calc(self):
         async with self:
             self.error_message = ""
             try:
@@ -89,8 +88,10 @@ class ProbabilityState(rx.State):
                 else: self.error_message = resp.text
             except Exception as e: self.error_message = str(e)
 
-    @rx.background
-    async def run_joint_calc(self):
+    def run_dist_calc(self):
+        return rx.background(self._run_dist_calc)
+
+    async def _run_joint_calc(self):
         async with self:
             self.error_message = ""
             try:
@@ -101,8 +102,10 @@ class ProbabilityState(rx.State):
                 else: self.error_message = resp.text
             except Exception as e: self.error_message = str(e)
 
-    @rx.background
-    async def run_custom_pdf_calc(self):
+    def run_joint_calc(self):
+        return rx.background(self._run_joint_calc)
+
+    async def _run_custom_pdf_calc(self):
         async with self:
             self.error_message = ""
             try:
@@ -117,8 +120,10 @@ class ProbabilityState(rx.State):
                 else: self.error_message = resp.text
             except Exception as e: self.error_message = str(e)
 
-    @rx.background
-    async def run_hypothesis_test(self):
+    def run_custom_pdf_calc(self):
+        return rx.background(self._run_custom_pdf_calc)
+
+    async def _run_hypothesis_test(self):
         async with self:
             self.error_message = ""
             try:
@@ -134,6 +139,9 @@ class ProbabilityState(rx.State):
                 if resp.status_code == 200: self.test_result = json.dumps(resp.json()["result"], indent=2)
                 else: self.error_message = resp.text
             except Exception as e: self.error_message = str(e)
+
+    def run_hypothesis_test(self):
+        return rx.background(self._run_hypothesis_test)
 
 # --- UI Components ---
 def create_card(*children, **props):

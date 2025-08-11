@@ -24,8 +24,7 @@ class StatisticsState(rx.State):
     error_message: str = ""
 
     # --- API Calls ---
-    @rx.background
-    async def get_descriptive_stats(self):
+    async def _get_descriptive_stats(self):
         async with self:
             self.error_message = ""
             try:
@@ -42,8 +41,10 @@ class StatisticsState(rx.State):
             except Exception as e:
                 self.error_message = f"Invalid input: {e}"
 
-    @rx.background
-    async def run_regression(self):
+    def get_descriptive_stats(self):
+        return rx.background(self._get_descriptive_stats)
+
+    async def _run_regression(self):
         async with self:
             self.error_message = ""
             try:
@@ -71,6 +72,9 @@ class StatisticsState(rx.State):
                     self.error_message = resp.text
             except Exception as e:
                 self.error_message = f"Calculation error: {e}"
+
+    def run_regression(self):
+        return rx.background(self._run_regression)
 
 # --- UI Components ---
 def create_card(*children, **props):

@@ -42,8 +42,7 @@ class DiscreteMathsState(rx.State):
         self.set_inputs[index] = value
 
     # --- API Calls ---
-    @rx.background
-    async def run_number_theory_op(self, op: str):
+    async def _run_number_theory_op(self, op: str):
         async with self:
             self.error_message = ""
             self.nt_result = ""
@@ -70,8 +69,10 @@ class DiscreteMathsState(rx.State):
             except Exception as e:
                 self.error_message = f"Invalid input: {e}"
 
-    @rx.background
-    async def run_set_op(self, op: str):
+    def run_number_theory_op(self, op: str):
+        return rx.background(self._run_number_theory_op, op)
+
+    async def _run_set_op(self, op: str):
         async with self:
             self.error_message = ""
             self.set_op_result = ""
@@ -101,8 +102,10 @@ class DiscreteMathsState(rx.State):
             except Exception as e:
                 self.error_message = f"Invalid input format: {e}"
 
-    @rx.background
-    async def run_bool_op(self):
+    def run_set_op(self, op: str):
+        return rx.background(self._run_set_op, op)
+
+    async def _run_bool_op(self):
         async with self:
             self.error_message = ""
             self.bool_result = ""
@@ -121,8 +124,10 @@ class DiscreteMathsState(rx.State):
             except Exception as e:
                 self.error_message = f"Invalid input: {e}"
 
-    @rx.background
-    async def run_graph_analysis(self):
+    def run_bool_op(self):
+        return rx.background(self._run_bool_op)
+
+    async def _run_graph_analysis(self):
         async with self:
             self.error_message = ""
             self.graph_result = {}
@@ -144,6 +149,9 @@ class DiscreteMathsState(rx.State):
                     self.error_message = f"Error: {response.text}"
             except Exception as e:
                 self.error_message = f"An error occurred: {e}"
+
+    def run_graph_analysis(self):
+        return rx.background(self._run_graph_analysis)
 
 # --- UI Components ---
 def create_analysis_checkboxes() -> rx.Component:

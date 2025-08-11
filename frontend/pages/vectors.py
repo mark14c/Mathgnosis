@@ -22,8 +22,7 @@ class VectorsState(rx.State):
     def handle_vector_input(self, value: str, index: int):
         self.vector_inputs[index] = value
 
-    @rx.background
-    async def calculate(self):
+    async def _calculate(self):
         async with self:
             self.error_message = ""
             self.result = ""
@@ -48,6 +47,9 @@ class VectorsState(rx.State):
                     self.error_message = f"Error: {resp.text}"
             except Exception as e:
                 self.error_message = f"Invalid input or calculation error: {e}"
+
+    def calculate(self):
+        return rx.background(self._calculate)
 
 def vectors_page() -> rx.Component:
     operations = [

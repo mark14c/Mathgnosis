@@ -16,8 +16,7 @@ class CalculusState(rx.State):
     # API call error
     error_message: str = ""
 
-    @rx.background
-    async def get_derivative(self):
+    async def _get_derivative(self):
         async with self:
             self.error_message = ""
             self.diff_result = ""
@@ -42,8 +41,10 @@ class CalculusState(rx.State):
             except Exception as e:
                 self.error_message = f"An unexpected error occurred: {e}"
 
-    @rx.background
-    async def get_gradient(self):
+    def get_derivative(self):
+        return rx.background(self._get_derivative)
+
+    async def _get_gradient(self):
         async with self:
             self.error_message = ""
             self.grad_result = ""
@@ -66,6 +67,9 @@ class CalculusState(rx.State):
 
             except Exception as e:
                 self.error_message = f"An unexpected error occurred: {e}"
+    
+    def get_gradient(self):
+        return rx.background(self._get_gradient)
 
 
 def create_calculus_card(title: str, content: rx.Component) -> rx.Component:

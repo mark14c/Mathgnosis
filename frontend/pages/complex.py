@@ -17,8 +17,7 @@ class ComplexState(rx.State):
     operation: str = "add"
     arithmetic_result: str = ""
 
-    @rx.background
-    async def polar_to_rectangular(self):
+    async def _polar_to_rectangular(self):
         async with self:
             try:
                 r, theta = map(float, self.polar_input.split(','))
@@ -33,8 +32,10 @@ class ComplexState(rx.State):
             except Exception:
                 self.rectangular_output = f"Error: Invalid input format."
 
-    @rx.background
-    async def rectangular_to_polar(self):
+    def polar_to_rectangular(self):
+        return rx.background(self._polar_to_rectangular)
+
+    async def _rectangular_to_polar(self):
         async with self:
             try:
                 async with httpx.AsyncClient() as client:
@@ -48,8 +49,10 @@ class ComplexState(rx.State):
             except Exception as e:
                 self.polar_output = f"Error: {e}"
 
-    @rx.background
-    async def calculate_arithmetic(self):
+    def rectangular_to_polar(self):
+        return rx.background(self._rectangular_to_polar)
+
+    async def _calculate_arithmetic(self):
         async with self:
             try:
                 numbers = [s.strip() for s in self.complex_numbers_input.split(',')]
@@ -63,6 +66,9 @@ class ComplexState(rx.State):
                     self.arithmetic_result = f"Error: {response.text}"
             except Exception as e:
                 self.arithmetic_result = f"Error: {e}"
+    
+    def calculate_arithmetic(self):
+        return rx.background(self._calculate_arithmetic)
 
 
 def complex_page() -> rx.Component:

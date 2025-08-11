@@ -47,8 +47,7 @@ class UnitConverterState(rx.State):
         self.result = "" # Clear result on category change
 
     # --- Live Conversion ---
-    @rx.background
-    async def get_conversion(self):
+    async def _get_conversion(self):
         async with self:
             if not self.input_value or not self.from_unit or not self.to_unit:
                 return
@@ -66,6 +65,9 @@ class UnitConverterState(rx.State):
                 self.error_message = "Invalid input value."
             except Exception as e:
                 self.error_message = f"Conversion error: {e}"
+
+    def get_conversion(self):
+        return rx.background(self._get_conversion)
 
 def unit_conversion_page() -> rx.Component:
     return rx.box(

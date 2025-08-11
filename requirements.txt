@@ -1,6 +1,5 @@
 reflex
 fastapi
-uvicorn
 httpx
 numpy
 sympy
@@ -8,3 +7,4 @@ scipy
 scikit-learn
 networkx
 pint
+plotly

@@ -18,8 +18,7 @@ class EquationsState(rx.State):
     error_message: str = ""
 
     # --- API Calls ---
-    @rx.background
-    async def solve_polynomial(self):
+    async def _solve_polynomial(self):
         async with self:
             self.error_message = ""
             try:
@@ -33,8 +32,10 @@ class EquationsState(rx.State):
             except Exception as e:
                 self.error_message = f"Invalid input: {e}"
 
-    @rx.background
-    async def solve_simultaneous(self):
+    def solve_polynomial(self):
+        return rx.background(self._solve_polynomial)
+
+    async def _solve_simultaneous(self):
         async with self:
             self.error_message = ""
             try:
@@ -49,6 +50,9 @@ class EquationsState(rx.State):
                     self.error_message = resp.text
             except Exception as e:
                 self.error_message = f"Invalid input or calculation error: {e}"
+
+    def solve_simultaneous(self):
+        return rx.background(self._solve_simultaneous)
 
 def equations_page() -> rx.Component:
     return rx.box(
