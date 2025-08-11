@@ -1,0 +1,156 @@
+openapi: 3.0.0
+info:
+  title: Mathgnosis API
+  description: API for the Mathgnosis application, providing a suite of mathematical tools.
+  version: 1.0.0
+paths:
+  /api/calculator/eval:
+    post:
+      summary: Evaluate a mathematical expression
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                expression:
+                  type: string
+                  example: "2+2"
+      responses:
+        '200':
+          description: Successful evaluation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: number
+  /calculus/differentiate:
+    post:
+      summary: Differentiate a function
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                function_str:
+                  type: string
+                  example: "x**2 + y"
+                variables:
+                  type: array
+                  items:
+                    type: string
+                  example: ["x", "y"]
+      responses:
+        '200':
+          description: Successful differentiation
+  /calculus/gradient:
+    post:
+      summary: Calculate the gradient of a function
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                function_str:
+                  type: string
+                  example: "x**2 + y**2"
+      responses:
+        '200':
+          description: Successful gradient calculation
+  /complex/polar_to_rectangular:
+    post:
+      summary: Convert polar coordinates to rectangular
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                r:
+                  type: number
+                theta:
+                  type: number
+      responses:
+        '200':
+          description: Successful conversion
+  /complex/rectangular_to_polar:
+    post:
+      summary: Convert rectangular coordinates to polar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rect_str:
+                  type: string
+                  example: "3+4j"
+      responses:
+        '200':
+          description: Successful conversion
+  /complex/arithmetic:
+    post:
+      summary: Perform arithmetic operations on complex numbers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                numbers:
+                  type: array
+                  items:
+                    type: string
+                  example: ["3+4j", "1+2j"]
+                operation:
+                  type: string
+                  example: "add"
+      responses:
+        '200':
+          description: Successful operation
+  /discrete_maths/gcd:
+    post:
+      summary: Calculate the greatest common divisor
+      # ... (request and response schemas)
+  /discrete_maths/lcm:
+    post:
+      summary: Calculate the least common multiple
+      # ... (request and response schemas)
+  /equations/solve_polynomial:
+    post:
+      summary: Solve a polynomial equation
+      # ... (request and response schemas)
+  /equations/solve_simultaneous:
+    post:
+      summary: Solve a system of linear equations
+      # ... (request and response schemas)
+  /matrices/calculate:
+    post:
+      summary: Perform matrix operations
+      # ... (request and response schemas)
+  /probability/standard_distribution:
+    post:
+      summary: Calculate probabilities for standard distributions
+      # ... (request and response schemas)
+  /statistics/descriptive:
+    post:
+      summary: Get descriptive statistics for a dataset
+      # ... (request and response schemas)
+  /unit_converter/convert:
+    post:
+      summary: Convert between units
+      # ... (request and response schemas)
+  /vectors/calculate:
+    post:
+      summary: Perform vector operations
+      # ... (request and response schemas)
