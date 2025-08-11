@@ -62,11 +62,11 @@ def vectors_page() -> rx.Component:
         rx.heading("Define Vectors", size="6"),
         rx.text("Enter each vector with comma-separated values."),
         rx.foreach(
-            rx.Var.range(rx.length(VectorsState.vector_inputs)),
-            lambda i: rx.hstack(
+            VectorsState.vector_inputs,
+            lambda vector, i: rx.hstack(
                 rx.input(
                     placeholder=f"Vector {i+1}",
-                    value=VectorsState.vector_inputs[i],
+                    value=vector,
                     on_change=lambda val: VectorsState.handle_vector_input(val, i),
                     width="100%",
                     style=style.input_style

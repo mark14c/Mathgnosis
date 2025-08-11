@@ -72,11 +72,11 @@ def matrices_page() -> rx.Component:
         rx.heading("Define Matrices", size="6"),
         rx.text("Enter each matrix with commas separating values and new lines separating rows."),
         rx.foreach(
-            rx.Var.range(rx.length(MatricesState.matrix_inputs)),
-            lambda i: rx.hstack(
+            MatricesState.matrix_inputs,
+            lambda matrix, i: rx.hstack(
                 rx.text_area(
-                    placeholder=f"Matrix {chr(65+i)}",
-                    value=MatricesState.matrix_inputs[i],
+                    placeholder=f"Matrix {i+1}",
+                    value=matrix,
                     on_change=lambda val: MatricesState.handle_matrix_input(val, i),
                     height="120px",
                     width="250px",

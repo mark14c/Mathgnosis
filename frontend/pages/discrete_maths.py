@@ -231,11 +231,11 @@ def discrete_maths_page() -> rx.Component:
                         rx.heading("Enter Sets", size="sm"),
                         rx.text("Use comma-separated values (e.g., 1,2,3) or list format (e.g., [1, 2, \"a\"])"),
                         rx.foreach(
-                            rx.Var.range(rx.length(DiscreteMathsState.set_inputs)),
-                            lambda i: rx.hstack(
+                            DiscreteMathsState.set_inputs,
+                            lambda item, i: rx.hstack(
                                 rx.input(
-                                    placeholder=f"Set {chr(65+i)}",
-                                    value=DiscreteMathsState.set_inputs[i],
+                                    placeholder=f"Set {i+1}",
+                                    value=item,
                                     on_change=lambda val: DiscreteMathsState.handle_set_input_change(val, i),
                                     width="100%",
                                     style=style.input_style

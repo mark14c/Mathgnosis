@@ -93,11 +93,11 @@ def graphs_page() -> rx.Component:
                 rx.vstack(
                     rx.heading("Equations (y = f(x))", size="5"),
                     rx.foreach(
-                        rx.Var.range(rx.length(GraphingState.equations_2d)),
-                        lambda i: rx.hstack(
+                        GraphingState.equations_2d,
+                        lambda eq, i: rx.hstack(
                             rx.input(
                                 placeholder="e.g., x**2",
-                                value=GraphingState.equations_2d[i],
+                                value=eq,
                                 on_change=lambda val: GraphingState.update_equation_2d(i, val),
                                 width="100%",
                                 style=style.input_style
@@ -122,11 +122,11 @@ def graphs_page() -> rx.Component:
                 rx.vstack(
                     rx.heading("Equations (z = f(x, y))", size="5"),
                     rx.foreach(
-                        rx.Var.range(rx.length(GraphingState.equations_3d)),
-                        lambda i: rx.hstack(
+                        GraphingState.equations_3d,
+                        lambda eq, i: rx.hstack(
                             rx.input(
                                 placeholder="e.g., sin(x*y)",
-                                value=GraphingState.equations_3d[i],
+                                value=eq,
                                 on_change=lambda val: GraphingState.update_equation_3d(i, val),
                                 width="100%",
                                 style=style.input_style
