@@ -69,10 +69,10 @@ def matrices_page() -> rx.Component:
     ]
     
     content = rx.vstack(
-        rx.heading("Define Matrices", size="lg"),
+        rx.heading("Define Matrices", size="6"),
         rx.text("Enter each matrix with commas separating values and new lines separating rows."),
         rx.foreach(
-            rx.Var.range(len(MatricesState.matrix_inputs)),
+            rx.Var.range(rx.length(MatricesState.matrix_inputs)),
             lambda i: rx.hstack(
                 rx.text_area(
                     placeholder=f"Matrix {chr(65+i)}",
@@ -88,7 +88,7 @@ def matrices_page() -> rx.Component:
         ),
         rx.button("Add Matrix", on_click=MatricesState.add_matrix, margin_top="0.5em", style=style.button_style),
         
-        rx.heading("Select Operation", size="lg", margin_top="1.5em"),
+        rx.heading("Select Operation", size="6", margin_top="1.5em"),
         rx.select(
             operations,
             default_value="add",
@@ -106,7 +106,7 @@ def matrices_page() -> rx.Component:
         ),
         rx.button("Calculate", on_click=MatricesState.calculate, margin_top="1em", size="3", style=style.button_style),
         
-        rx.heading("Result", size="lg", margin_top="1.5em"),
+        rx.heading("Result", size="6", margin_top="1.5em"),
         rx.cond(
             MatricesState.error_message,
             rx.callout.root(

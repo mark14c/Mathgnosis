@@ -59,10 +59,10 @@ def vectors_page() -> rx.Component:
         "norm", "orthonormalize", "projection", "cosine_similarity", "linear_transformation"
     ]
     content = rx.vstack(
-        rx.heading("Define Vectors", size="lg"),
+        rx.heading("Define Vectors", size="6"),
         rx.text("Enter each vector with comma-separated values."),
         rx.foreach(
-            rx.Var.range(len(VectorsState.vector_inputs)),
+            rx.Var.range(rx.length(VectorsState.vector_inputs)),
             lambda i: rx.hstack(
                 rx.input(
                     placeholder=f"Vector {i+1}",
@@ -76,7 +76,7 @@ def vectors_page() -> rx.Component:
         ),
         rx.button("Add Vector", on_click=VectorsState.add_vector, margin_top="0.5em", style=style.button_style),
         
-        rx.heading("Select Operation", size="lg", margin_top="1.5em"),
+        rx.heading("Select Operation", size="6", margin_top="1.5em"),
         rx.select(operations, default_value="add", on_change=VectorsState.set_operation),
         
         rx.cond(VectorsState.operation == "scalar_multiplication",
@@ -88,7 +88,7 @@ def vectors_page() -> rx.Component:
 
         rx.button("Calculate", on_click=VectorsState.calculate, margin_top="1em", size="3", style=style.button_style),
         
-        rx.heading("Result", size="lg", margin_top="1.5em"),
+        rx.heading("Result", size="6", margin_top="1.5em"),
         rx.cond(
             VectorsState.error_message,
             rx.callout.root(rx.callout.icon(rx.icon("alert-triangle")), rx.callout.text(VectorsState.error_message), color_scheme="red"),

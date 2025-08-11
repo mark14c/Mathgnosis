@@ -85,7 +85,7 @@ def unit_conversion_page() -> rx.Component:
                 ),
                 rx.vstack(
                     rx.text("To"),
-                    rx.heading(UnitConverterState.result, size="lg"),
+                    rx.heading(UnitConverterState.result, size="6"),
                     rx.select(UnitConverterState.current_units, value=UnitConverterState.to_unit, on_change=UnitConverterState.set_to_unit),
                     width="100%",
                     align_items="end",
