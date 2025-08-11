@@ -19,6 +19,9 @@ class SimultaneousRequest(BaseModel):
 class GenericResponse(BaseModel):
     result: any
 
+    class Config:
+        arbitrary_types_allowed = True
+
 # --- API Endpoints ---
 @router.post("/solve_polynomial", response_model=GenericResponse)
 def solve_polynomial(req: PolynomialRequest):

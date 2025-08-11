@@ -25,6 +25,9 @@ class FactorizationRequest(BaseModel):
 class GenericResponse(BaseModel):
     result: Any
 
+    class Config:
+        arbitrary_types_allowed = True
+
 @router.post("/gcd", response_model=GenericResponse)
 def get_gcd(req: NumbersRequest):
     if len(req.numbers) < 2:

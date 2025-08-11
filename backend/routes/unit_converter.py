@@ -44,6 +44,9 @@ class ConversionRequest(BaseModel):
 class GenericResponse(BaseModel):
     result: any
 
+    class Config:
+        arbitrary_types_allowed = True
+
 # --- API Endpoints ---
 @router.get("/units", response_model=Dict[str, List[str]])
 def get_all_units():

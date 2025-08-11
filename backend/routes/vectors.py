@@ -18,6 +18,9 @@ class VectorRequest(BaseModel):
 class GenericResponse(BaseModel):
     result: any
 
+    class Config:
+        arbitrary_types_allowed = True
+
 # --- API Endpoint ---
 @router.post("/calculate", response_model=GenericResponse)
 def calculate_vector_operation(req: VectorRequest):
