@@ -1,6 +1,7 @@
 import reflex as rx
 from ..components.sidebar import sidebar, SidebarState
 from .. import style
+from ..components.page_layout import template
 import httpx
 import json
 
@@ -195,167 +196,163 @@ def render_graph_results(results: dict) -> rx.Component:
         width="100%",
     )
 
+@rx.page(route="/discrete_maths", title="Discrete Mathematics")
 def discrete_maths_page() -> rx.Component:
-    return rx.box(
-        sidebar(),
-        rx.box(
-            rx.heading("Discrete Mathematics", font_size="2em", margin_bottom="1em"),
-            rx.accordion.root(
-                # Number Theory Section
-                rx.accordion.item(
-                    header="Number Theory",
-                    content=rx.vstack(
-                        rx.card(
-                            rx.vstack(
-                                rx.heading("GCD, LCM, Prime Factorization", size="sm"),
-                                rx.input(placeholder="Numbers (e.g., 48, 18)", on_change=DiscreteMathsState.set_nt_numbers_input),
-                                rx.hstack(
-                                    rx.button("GCD", on_click=lambda: DiscreteMathsState.run_number_theory_op("gcd")),
-                                    rx.button("LCM", on_click=lambda: DiscreteMathsState.run_number_theory_op("lcm")),
-                                    rx.button("Factorize", on_click=lambda: DiscreteMathsState.run_number_theory_op("prime_factorization")),
-                                ),
-                                rx.heading("Modulo", size="sm", margin_top="1em"),
-                                rx.input(placeholder="Dividend, Divisor (e.g., 10, 3)", on_change=DiscreteMathsState.set_nt_modulo_input),
-                                rx.button("Modulo", on_click=lambda: DiscreteMathsState.run_number_theory_op("modulo")),
-                                rx.text("Result:", weight="bold", margin_top="1em"),
-                                rx.code(DiscreteMathsState.nt_result, variant="surface"),
-                            ),
+    content = rx.accordion.root(
+        # Number Theory Section
+        rx.accordion.item(
+            header="Number Theory",
+            content=rx.vstack(
+                rx.card(
+                    rx.vstack(
+                        rx.heading("GCD, LCM, Prime Factorization", size="sm"),
+                        rx.input(placeholder="Numbers (e.g., 48, 18)", on_change=DiscreteMathsState.set_nt_numbers_input, style=style.input_style),
+                        rx.hstack(
+                            rx.button("GCD", on_click=lambda: DiscreteMathsState.run_number_theory_op("gcd"), style=style.button_style),
+                            rx.button("LCM", on_click=lambda: DiscreteMathsState.run_number_theory_op("lcm"), style=style.button_style),
+                            rx.button("Factorize", on_click=lambda: DiscreteMathsState.run_number_theory_op("prime_factorization"), style=style.button_style),
                         ),
-                        spacing="4",
+                        rx.heading("Modulo", size="sm", margin_top="1em"),
+                        rx.input(placeholder="Dividend, Divisor (e.g., 10, 3)", on_change=DiscreteMathsState.set_nt_modulo_input, style=style.input_style),
+                        rx.button("Modulo", on_click=lambda: DiscreteMathsState.run_number_theory_op("modulo"), style=style.button_style),
+                        rx.text("Result:", weight="bold", margin_top="1em"),
+                        rx.code(DiscreteMathsState.nt_result, variant="surface"),
                     ),
                 ),
-                # Set Operations Section
-                rx.accordion.item(
-                    header="Set Operations",
-                    content=rx.vstack(
-                        rx.card(
-                            rx.vstack(
-                                rx.heading("Enter Sets", size="sm"),
-                                rx.text("Use comma-separated values (e.g., 1,2,3) or list format (e.g., [1, 2, \"a\"])"),
-                                rx.foreach(
-                                    rx.Var.range(len(DiscreteMathsState.set_inputs)),
-                                    lambda i: rx.hstack(
-                                        rx.input(
-                                            placeholder=f"Set {chr(65+i)}",
-                                            value=DiscreteMathsState.set_inputs[i],
-                                            on_change=lambda val: DiscreteMathsState.handle_set_input_change(val, i),
-                                            width="100%",
-                                        ),
-                                        rx.button("-", on_click=lambda: DiscreteMathsState.remove_set_input(i), size="1"),
-                                    )
+                spacing="4",
+            ),
+        ),
+        # Set Operations Section
+        rx.accordion.item(
+            header="Set Operations",
+            content=rx.vstack(
+                rx.card(
+                    rx.vstack(
+                        rx.heading("Enter Sets", size="sm"),
+                        rx.text("Use comma-separated values (e.g., 1,2,3) or list format (e.g., [1, 2, \"a\"])"),
+                        rx.foreach(
+                            rx.Var.range(len(DiscreteMathsState.set_inputs)),
+                            lambda i: rx.hstack(
+                                rx.input(
+                                    placeholder=f"Set {chr(65+i)}",
+                                    value=DiscreteMathsState.set_inputs[i],
+                                    on_change=lambda val: DiscreteMathsState.handle_set_input_change(val, i),
+                                    width="100%",
+                                    style=style.input_style
                                 ),
-                                rx.button("Add Set", on_click=DiscreteMathsState.add_set_input, margin_top="0.5em"),
-                                rx.hstack(
-                                    rx.button("Union", on_click=lambda: DiscreteMathsState.run_set_op("set_union")),
-                                    rx.button("Intersection", on_click=lambda: DiscreteMathsState.run_set_op("set_intersection")),
-                                    rx.button("Difference (A-B)", on_click=lambda: DiscreteMathsState.run_set_op("set_difference")),
-                                    rx.button("Cartesian Product", on_click=lambda: DiscreteMathsState.run_set_op("set_cartesian_product")),
-                                ),
-                                rx.text("Result:", weight="bold", margin_top="1em"),
-                                rx.code(DiscreteMathsState.set_op_result, variant="surface"),
+                                rx.button("-", on_click=lambda: DiscreteMathsState.remove_set_input(i), size="1", style=style.button_style),
                             )
                         ),
-                        spacing="4",
-                    ),
-                ),
-                # Boolean Logic Section
-                rx.accordion.item(
-                    header="Boolean Logic",
-                    content=rx.card(
-                        rx.vstack(
-                            rx.heading("Boolean Inputs", size="sm"),
-                            rx.text("Enter 'true' or 'false', comma-separated."),
-                            rx.input(
-                                value=DiscreteMathsState.bool_inputs,
-                                on_change=DiscreteMathsState.set_bool_inputs,
-                            ),
-                            rx.select(
-                                ["and", "or", "not", "nand", "nor", "xor", "xnor", "implies"],
-                                default_value="and",
-                                on_change=DiscreteMathsState.set_bool_operation,
-                            ),
-                            rx.button("Evaluate", on_click=DiscreteMathsState.run_bool_op),
-                            rx.text("Result:", weight="bold", margin_top="1em"),
-                            rx.code(DiscreteMathsState.bool_result, variant="surface"),
-                        )
-                    ),
-                ),
-                # Graph Theory Section
-                rx.accordion.item(
-                    header="Graph Theory",
-                    content=rx.vstack(
+                        rx.button("Add Set", on_click=DiscreteMathsState.add_set_input, margin_top="0.5em", style=style.button_style),
                         rx.hstack(
-                            rx.vstack(
-                                rx.heading("Graph Input", size="md"),
-                                rx.text("Enter Adjacency List:", size="sm"),
-                                rx.text_area(
-                                    value=DiscreteMathsState.graph_adj_list,
-                                    on_change=DiscreteMathsState.set_graph_adj_list,
-                                    placeholder="A: B(1), C(4)\nB: C(2), D(5)\nC: D(1)\nD:",
-                                    height="200px",
-                                    width="100%",
-                                ),
-                                rx.hstack(
-                                    rx.text("Graph Type:", size="sm"),
-                                    rx.switch(
-                                        is_checked=DiscreteMathsState.graph_is_directed,
-                                        on_change=DiscreteMathsState.set_graph_is_directed,
-                                    ),
-                                    rx.text(rx.cond(DiscreteMathsState.graph_is_directed, "Directed", "Undirected")),
-                                    spacing="2",
-                                ),
-                                rx.heading("Analysis Options", size="md", margin_top="1em"),
-                                create_analysis_checkboxes(),
-                                rx.hstack(
-                                    rx.input(
-                                        placeholder="Start Node (e.g., A)",
-                                        value=DiscreteMathsState.graph_start_node,
-                                        on_change=DiscreteMathsState.set_graph_start_node,
-                                    ),
-                                    rx.input(
-                                        placeholder="End Node (for Max Flow)",
-                                        value=DiscreteMathsState.graph_end_node,
-                                        on_change=DiscreteMathsState.set_graph_end_node,
-                                    ),
-                                    width="100%",
-                                ),
-                                rx.button("Analyze Graph", on_click=DiscreteMathsState.run_graph_analysis, margin_top="1em", width="100%",),
-                                spacing="4",
-                                width="50%",
-                                align_items="start",
-                            ),
-                            rx.vstack(
-                                rx.heading("Analysis Results", size="md"),
-                                rx.cond(
-                                    DiscreteMathsState.graph_result,
-                                    render_graph_results(DiscreteMathsState.graph_result),
-                                    rx.text("Run analysis to see results."),
-                                ),
-                                spacing="4",
-                                width="50%",
-                                align_self="stretch",
-                                height="100%",
-                            ),
-                            spacing="6",
+                            rx.button("Union", on_click=lambda: DiscreteMathsState.run_set_op("set_union"), style=style.button_style),
+                            rx.button("Intersection", on_click=lambda: DiscreteMathsState.run_set_op("set_intersection"), style=style.button_style),
+                            rx.button("Difference (A-B)", on_click=lambda: DiscreteMathsState.run_set_op("set_difference"), style=style.button_style),
+                            rx.button("Cartesian Product", on_click=lambda: DiscreteMathsState.run_set_op("set_cartesian_product"), style=style.button_style),
+                        ),
+                        rx.text("Result:", weight="bold", margin_top="1em"),
+                        rx.code(DiscreteMathsState.set_op_result, variant="surface"),
+                    )
+                ),
+                spacing="4",
+            ),
+        ),
+        # Boolean Logic Section
+        rx.accordion.item(
+            header="Boolean Logic",
+            content=rx.card(
+                rx.vstack(
+                    rx.heading("Boolean Inputs", size="sm"),
+                    rx.text("Enter 'true' or 'false', comma-separated."),
+                    rx.input(
+                        value=DiscreteMathsState.bool_inputs,
+                        on_change=DiscreteMathsState.set_bool_inputs,
+                        style=style.input_style
+                    ),
+                    rx.select(
+                        ["and", "or", "not", "nand", "nor", "xor", "xnor", "implies"],
+                        default_value="and",
+                        on_change=DiscreteMathsState.set_bool_operation,
+                    ),
+                    rx.button("Evaluate", on_click=DiscreteMathsState.run_bool_op, style=style.button_style),
+                    rx.text("Result:", weight="bold", margin_top="1em"),
+                    rx.code(DiscreteMathsState.bool_result, variant="surface"),
+                )
+            ),
+        ),
+        # Graph Theory Section
+        rx.accordion.item(
+            header="Graph Theory",
+            content=rx.vstack(
+                rx.hstack(
+                    rx.vstack(
+                        rx.heading("Graph Input", size="md"),
+                        rx.text("Enter Adjacency List:", size="sm"),
+                        rx.text_area(
+                            value=DiscreteMathsState.graph_adj_list,
+                            on_change=DiscreteMathsState.set_graph_adj_list,
+                            placeholder="A: B(1), C(4)\nB: C(2), D(5)\nC: D(1)\nD:",
+                            height="200px",
                             width="100%",
-                            align_items="start",
+                            style=style.textarea_style
                         ),
-                        rx.cond(
-                            DiscreteMathsState.error_message,
-                            rx.callout.root(
-                                rx.callout.icon(rx.icon("alert-triangle")),
-                                rx.callout.text(DiscreteMathsState.error_message),
-                                color_scheme="red", role="alert",
+                        rx.hstack(
+                            rx.text("Graph Type:", size="sm"),
+                            rx.switch(
+                                is_checked=DiscreteMathsState.graph_is_directed,
+                                on_change=DiscreteMathsState.set_graph_is_directed,
                             ),
+                            rx.text(rx.cond(DiscreteMathsState.graph_is_directed, "Directed", "Undirected")),
+                            spacing="2",
                         ),
+                        rx.heading("Analysis Options", size="md", margin_top="1em"),
+                        create_analysis_checkboxes(),
+                        rx.hstack(
+                            rx.input(
+                                placeholder="Start Node (e.g., A)",
+                                value=DiscreteMathsState.graph_start_node,
+                                on_change=DiscreteMathsState.set_graph_start_node,
+                                style=style.input_style
+                            ),
+                            rx.input(
+                                placeholder="End Node (for Max Flow)",
+                                value=DiscreteMathsState.graph_end_node,
+                                on_change=DiscreteMathsState.set_graph_end_node,
+                                style=style.input_style
+                            ),
+                            width="100%",
+                        ),
+                        rx.button("Analyze Graph", on_click=DiscreteMathsState.run_graph_analysis, margin_top="1em", width="100%", style=style.button_style),
+                        spacing="4",
+                        width="50%",
+                        align_items="start",
+                    ),
+                    rx.vstack(
+                        rx.heading("Analysis Results", size="md"),
+                        rx.cond(
+                            DiscreteMathsState.graph_result,
+                            render_graph_results(DiscreteMathsState.graph_result),
+                            rx.text("Run analysis to see results."),
+                        ),
+                        spacing="4",
+                        width="50%",
+                        align_self="stretch",
+                        height="100%",
+                    ),
+                    spacing="6",
+                    width="100%",
+                    align_items="start",
+                ),
+                rx.cond(
+                    DiscreteMathsState.error_message,
+                    rx.callout.root(
+                        rx.callout.icon(rx.icon("alert-triangle")),
+                        rx.callout.text(DiscreteMathsState.error_message),
+                        color_scheme="red", role="alert",
                     ),
                 ),
-                collapsible=True, type="multiple", width="100%", default_value=["graph_theory"],
             ),
-            padding="1em",
-            margin_left=rx.cond(SidebarState.is_collapsed, "60px", "250px"),
-            transition="margin-left 0.3s ease-in-out",
-            width="100%",
         ),
-        style=style.base_style,
+        collapsible=True, type="multiple", width="100%", default_value=["graph_theory"],
     )
+    return template(title="Discrete Mathematics", content=content)

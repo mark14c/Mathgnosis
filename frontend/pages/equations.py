@@ -1,6 +1,7 @@
 import reflex as rx
 from ..components.sidebar import sidebar, SidebarState
 from .. import style
+from ..components.page_layout import template
 import httpx
 import json
 
@@ -54,56 +55,49 @@ class EquationsState(rx.State):
     def solve_simultaneous(self):
         return rx.background(self._solve_simultaneous)
 
+@rx.page(route="/equations", title="Equation Solvers")
 def equations_page() -> rx.Component:
-    return rx.box(
-        sidebar(),
-        rx.box(
-            rx.heading("Equation Solvers", font_size="2em", margin_bottom="1em"),
-            rx.tabs.root(
-                rx.tabs.list(
-                    rx.tabs.trigger("Polynomial Solver", value="poly"),
-                    rx.tabs.trigger("Simultaneous Equations", value="sim"),
-                ),
-                # Polynomial Tab
-                rx.tabs.content(
-                    rx.card(
-                        rx.vstack(
-                            rx.heading("Polynomial Root Finder", size="md"),
-                            rx.text("Enter coefficients in order of decreasing power (e.g., '1, -3, 2' for x^2 - 3x + 2)."),
-                            rx.input(placeholder="Coefficients", value=EquationsState.poly_coeffs, on_change=EquationsState.set_poly_coeffs),
-                            rx.button("Find Roots", on_click=EquationsState.solve_polynomial),
-                            rx.heading("Solutions for x", size="sm", margin_top="1em"),
-                            rx.code_block(EquationsState.poly_result, width="100%"),
-                            align_items="start", spacing="3",
-                        )
-                    ), value="poly"
-                ),
-                # Simultaneous Equations Tab
-                rx.tabs.content(
-                    rx.card(
-                        rx.vstack(
-                            rx.heading("Simultaneous Linear Equations (Ax = b)", size="md"),
-                            rx.text("Coefficient Matrix (A)"),
-                            rx.text_area(placeholder="A Matrix", value=EquationsState.sim_a_matrix, on_change=EquationsState.set_sim_a_matrix),
-                            rx.text("Constants Vector (b)"),
-                            rx.input(placeholder="b Vector", value=EquationsState.sim_b_vector, on_change=EquationsState.set_sim_b_vector),
-                            rx.button("Solve", on_click=EquationsState.solve_simultaneous),
-                            rx.heading("Solution Vector (x)", size="sm", margin_top="1em"),
-                            rx.code_block(EquationsState.sim_result, width="100%"),
-                            align_items="start", spacing="3",
-                        )
-                    ), value="sim"
-                ),
-                defaultValue="poly",
+    content = rx.vstack(
+        rx.tabs.root(
+            rx.tabs.list(
+                rx.tabs.trigger("Polynomial Solver", value="poly"),
+                rx.tabs.trigger("Simultaneous Equations", value="sim"),
             ),
-            rx.cond(
-                EquationsState.error_message,
-                rx.callout.root(rx.callout.icon(rx.icon("alert-triangle")), rx.callout.text(EquationsState.error_message), color_scheme="red", role="alert"),
+            # Polynomial Tab
+            rx.tabs.content(
+                rx.card(
+                    rx.vstack(
+                        rx.heading("Polynomial Root Finder", size="md"),
+                        rx.text("Enter coefficients in order of decreasing power (e.g., '1, -3, 2' for x^2 - 3x + 2)."),
+                        rx.input(placeholder="Coefficients", value=EquationsState.poly_coeffs, on_change=EquationsState.set_poly_coeffs, style=style.input_style),
+                        rx.button("Find Roots", on_click=EquationsState.solve_polynomial, style=style.button_style),
+                        rx.heading("Solutions for x", size="sm", margin_top="1em"),
+                        rx.code_block(EquationsState.poly_result, width="100%"),
+                        align_items="start", spacing="3",
+                    )
+                ), value="poly"
             ),
-            padding="1em",
-            margin_left=rx.cond(SidebarState.is_collapsed, "60px", "250px"),
-            transition="margin-left 0.3s ease-in-out",
-            width="100%",
+            # Simultaneous Equations Tab
+            rx.tabs.content(
+                rx.card(
+                    rx.vstack(
+                        rx.heading("Simultaneous Linear Equations (Ax = b)", size="md"),
+                        rx.text("Coefficient Matrix (A)"),
+                        rx.text_area(placeholder="A Matrix", value=EquationsState.sim_a_matrix, on_change=EquationsState.set_sim_a_matrix, style=style.textarea_style),
+                        rx.text("Constants Vector (b)"),
+                        rx.input(placeholder="b Vector", value=EquationsState.sim_b_vector, on_change=EquationsState.set_sim_b_vector, style=style.input_style),
+                        rx.button("Solve", on_click=EquationsState.solve_simultaneous, style=style.button_style),
+                        rx.heading("Solution Vector (x)", size="sm", margin_top="1em"),
+                        rx.code_block(EquationsState.sim_result, width="100%"),
+                        align_items="start", spacing="3",
+                    )
+                ), value="sim"
+            ),
+            defaultValue="poly",
         ),
-        style=style.base_style,
+        rx.cond(
+            EquationsState.error_message,
+            rx.callout.root(rx.callout.icon(rx.icon("alert-triangle")), rx.callout.text(EquationsState.error_message), color_scheme="red", role="alert"),
+        ),
     )
+    return template(title="Equation Solvers", content=content)

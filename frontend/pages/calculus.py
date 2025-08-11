@@ -71,77 +71,81 @@ class CalculusState(rx.State):
     def get_gradient(self):
         return rx.background(self._get_gradient)
 
-
-def create_calculus_card(title: str, content: rx.Component) -> rx.Component:
-    return rx.card(
-        rx.vstack(
-            rx.heading(title, size="md"),
-            content,
-            spacing="4",
-        ),
-        width="100%",
-    )
-
+@rx.page(route="/calculus", title="Calculus")
 def calculus_page() -> rx.Component:
     return rx.box(
         sidebar(),
-        rx.box(
-            rx.heading("Calculus", font_size="2em", margin_bottom="1em"),
-            rx.accordion.root(
-                rx.accordion.item(
-                    header="Differentiation",
-                    content=rx.vstack(
-                        create_calculus_card(
-                            "Partial Derivative",
-                            rx.vstack(
-                                rx.input(
-                                    placeholder="e.g., x**2 + y**3",
-                                    on_change=CalculusState.set_diff_function,
+        rx.center(
+            rx.card(
+                rx.vstack(
+                    rx.heading("Calculus", font_size="2em", margin_bottom="1em"),
+                    rx.accordion.root(
+                        rx.accordion.item(
+                            header="Differentiation",
+                            content=rx.vstack(
+                                rx.vstack(
+                                    rx.heading("Partial Derivative", size="md"),
+                                    rx.input(
+                                        placeholder="e.g., x**2 + y**3",
+                                        on_change=CalculusState.set_diff_function,
+                                        style=style.input_style
+                                    ),
+                                    rx.input(
+                                        placeholder="e.g., x, y",
+                                        on_change=CalculusState.set_diff_variables,
+                                        style=style.input_style
+                                    ),
+                                    rx.button("Calculate", on_click=CalculusState.get_derivative, style=style.button_style),
+                                    rx.text("Result:", weight="bold"),
+                                    rx.code(CalculusState.diff_result, variant="surface"),
+                                    spacing="4",
+                                    width="100%",
                                 ),
-                                rx.input(
-                                    placeholder="e.g., x, y",
-                                    on_change=CalculusState.set_diff_variables,
+                                rx.vstack(
+                                    rx.heading("Gradient", size="md"),
+                                    rx.input(
+                                        placeholder="e.g., x**2*y + sin(z)",
+                                        on_change=CalculusState.set_grad_function,
+                                        style=style.input_style
+                                    ),
+                                    rx.button("Calculate Gradient", on_click=CalculusState.get_gradient, style=style.button_style),
+                                    rx.text("Result (Gradient Vector):", weight="bold"),
+                                    rx.code(CalculusState.grad_result, variant="surface"),
+                                    spacing="4",
+                                    width="100%",
                                 ),
-                                rx.button("Calculate", on_click=CalculusState.get_derivative),
-                                rx.text("Result:", weight="bold"),
-                                rx.code(CalculusState.diff_result, variant="surface"),
+                                rx.cond(
+                                    CalculusState.error_message,
+                                    rx.callout.root(
+                                        rx.callout.icon(rx.icon("alert-triangle")),
+                                        rx.callout.text(CalculusState.error_message),
+                                        color_scheme="red",
+                                        role="alert",
+                                    ),
+                                ),
+                                spacing="4",
                             ),
                         ),
-                        create_calculus_card(
-                            "Gradient",
-                            rx.vstack(
-                                rx.input(
-                                    placeholder="e.g., x**2*y + sin(z)",
-                                    on_change=CalculusState.set_grad_function,
-                                ),
-                                rx.button("Calculate Gradient", on_click=CalculusState.get_gradient),
-                                rx.text("Result (Gradient Vector):", weight="bold"),
-                                rx.code(CalculusState.grad_result, variant="surface"),
-                            ),
-                        ),
-                        rx.cond(
-                            CalculusState.error_message,
-                            rx.callout.root(
-                                rx.callout.icon(rx.icon("alert-triangle")),
-                                rx.callout.text(CalculusState.error_message),
-                                color_scheme="red",
-                                role="alert",
-                            ),
-                        ),
-                        spacing="4",
+                        rx.accordion.item(header="Integration", content=rx.text("Integration tools will be available here.")),
+                        rx.accordion.item(header="Differential Equations", content=rx.text("ODE solvers will be available here.")),
+                        rx.accordion.item(header="Transforms", content=rx.text("Laplace and Fourier transforms will be available here.")),
+                        collapsible=True,
+                        type="multiple",
+                        width="100%",
                     ),
+                    padding="2em",
+                    border="1px solid #ddd",
+                    border_radius="15px",
+                    background_color="rgba(255, 255, 255, 0.8)",
+                    box_shadow="lg",
                 ),
-                rx.accordion.item(header="Integration", content=rx.text("Integration tools will be available here.")),
-                rx.accordion.item(header="Differential Equations", content=rx.text("ODE solvers will be available here.")),
-                rx.accordion.item(header="Transforms", content=rx.text("Laplace and Fourier transforms will be available here.")),
-                collapsible=True,
-                type="multiple",
-                width="100%",
+                style=style.card_style
             ),
-            padding="1em",
+            height="100vh",
             margin_left=rx.cond(SidebarState.is_collapsed, "60px", "250px"),
             transition="margin-left 0.3s ease-in-out",
-            width="100%",
+            background_image="url('https://www.free-css.com/assets/files/free-css-templates/preview/page289/ask-me/assets/images/page-heading-bg.jpg')",
+            background_size="cover",
         ),
         style=style.base_style,
     )
