@@ -83,7 +83,7 @@ def complex_page() -> rx.Component:
             rx.vstack(
                 rx.card(
                     rx.vstack(
-                        rx.heading("Polar to Rectangular", size="md"),
+                        rx.heading("Polar to Rectangular", size="5"),
                         rx.input(
                             placeholder="Enter r,θ (e.g., 5,36.87)",
                             on_change=ComplexState.set_polar_input,
@@ -99,7 +99,7 @@ def complex_page() -> rx.Component:
                 ),
                 rx.card(
                     rx.vstack(
-                        rx.heading("Rectangular to Polar", size="md"),
+                        rx.heading("Rectangular to Polar", size="5"),
                         rx.input(
                             placeholder="Enter a+bj (e.g., 3+4j)",
                             on_change=ComplexState.set_rectangular_input,
@@ -121,7 +121,7 @@ def complex_page() -> rx.Component:
         rx.tabs.content(
             rx.card(
                 rx.vstack(
-                    rx.heading("Complex Number Arithmetic", size="md"),
+                    rx.heading("Complex Number Arithmetic", size="5"),
                     rx.text("Enter complex numbers separated by commas."),
                     rx.textarea(
                         placeholder="e.g., 1+2j, 3-4j, 5+6j",

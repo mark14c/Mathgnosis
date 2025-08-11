@@ -43,3 +43,4 @@ app.add_page(settings_page, route="/settings")
 app.add_page(equations_page, route="/equations")
 app.add_page(graphs_page, route="/graphs")
 app.add_page(unit_conversion_page, route="/unit_conversion")
+

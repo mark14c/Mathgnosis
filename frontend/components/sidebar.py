@@ -35,7 +35,7 @@ def sidebar():
                 rx.heading("Mathgnosis", size="5", color="black"),
                 rx.spacer(),
                 rx.button(
-                    rx.icon(tag="pin_left", size=20),
+                    rx.icon(tag="arrow_left", size=20),
                     on_click=SidebarState.toggle_collapse,
                     variant="ghost",
                     color_scheme="gray",
@@ -57,8 +57,8 @@ def sidebar():
                         ),
                         content=rx.vstack(
                             sidebar_item("Calculator", "/calculator", "calculator"),
-                            sidebar_item("Equations", "/equations", "equal_to"),
-                            sidebar_item("Graphs", "/graphs", "activity_log"),
+                            sidebar_item("Equations", "/equations", "equal"),
+                            sidebar_item("Graphs", "/graphs", "activity"),
                             align_items="flex-start",
                             width="100%",
                         ),
@@ -66,17 +66,17 @@ def sidebar():
                     rx.accordion.item(
                         header=rx.accordion.trigger(
                             rx.hstack(
-                                rx.icon(tag="function", size=20),
+                                rx.icon(tag="function-square", size=20),
                                 rx.text("Advanced Math", size="3"),
                             ),
                             width="100%",
                         ),
                         content=rx.vstack(
-                            sidebar_item("Complex Numbers", "/complex", "blending_mode"),
-                            sidebar_item("Matrices", "/matrices", "grid"),
+                            sidebar_item("Complex Numbers", "/complex", "blend"),
+                            sidebar_item("Matrices", "/matrices", "layout-grid"),
                             sidebar_item("Vectors", "/vectors", "arrow_right"),
-                            sidebar_item("Calculus", "/calculus", "function"),
-                            sidebar_item("Discrete Maths", "/discrete_maths", "component_1"),
+                            sidebar_item("Calculus", "/calculus", "sigma"),
+                            sidebar_item("Discrete Maths", "/discrete_maths", "component"),
                             sidebar_item("Statistics", "/statistics", "bar_chart"),
                             sidebar_item("Probability", "/probability", "pie_chart"),
                             align_items="flex-start",
@@ -92,9 +92,9 @@ def sidebar():
                             width="100%",
                         ),
                         content=rx.vstack(
-                            sidebar_item("Unit Conversion", "/unit_conversion", "file_ruler"),
+                            sidebar_item("Unit Conversion", "/unit_conversion", "ruler"),
                             sidebar_item("History", "/history", "archive"),
-                            sidebar_item("Settings", "/settings", "gear"),
+                            sidebar_item("Settings", "/settings", "settings"),
                             align_items="flex-start",
                             width="100%",
                         ),

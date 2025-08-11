@@ -92,21 +92,21 @@ def statistics_page() -> rx.Component:
             # Descriptive Statistics Tab
             rx.tabs.content(
                 create_card(
-                    rx.heading("Data Input", size="md"),
+                    rx.heading("Data Input", size="5"),
                     rx.text("Enter comma-separated numerical data."),
                     rx.text_area(placeholder="Primary Dataset", value=StatisticsState.desc_data1, on_change=StatisticsState.set_desc_data1, style=style.textarea_style),
                     rx.text_area(placeholder="Second Dataset (for Concordance)", value=StatisticsState.desc_data2, on_change=StatisticsState.set_desc_data2, style=style.textarea_style),
                     rx.button("Calculate", on_click=StatisticsState.get_descriptive_stats, style=style.button_style),
-                    rx.heading("Results", size="md", margin_top="1em"),
+                    rx.heading("Results", size="5", margin_top="1em"),
                     rx.code_block(StatisticsState.desc_result, width="100%"),
                 ), value="desc"
             ),
             # Predictive Statistics Tab
             rx.tabs.content(
                 create_card(
-                    rx.heading("Model Selection", size="md"),
+                    rx.heading("Model Selection", size="5"),
                     rx.select(REGRESSION_MODELS, value=StatisticsState.pred_model, on_change=StatisticsState.set_pred_model),
-                    rx.heading("Data Input", size="md", margin_top="1em"),
+                    rx.heading("Data Input", size="5", margin_top="1em"),
                     rx.text("X (Independent Vars): One observation per line. Use commas for multiple variables."),
                     rx.text_area(placeholder="X Data", value=StatisticsState.pred_x_data, on_change=StatisticsState.set_pred_x_data, height="150px", style=style.textarea_style),
                     rx.text("Y (Dependent Var): Comma-separated."),
@@ -120,7 +120,7 @@ def statistics_page() -> rx.Component:
                     ),
                     
                     rx.button("Run Regression", on_click=StatisticsState.run_regression, margin_top="1em", style=style.button_style),
-                    rx.heading("Model Results", size="md", margin_top="1em"),
+                    rx.heading("Model Results", size="5", margin_top="1em"),
                     rx.code_block(StatisticsState.pred_result, width="100%"),
                 ), value="pred"
             ),

@@ -91,7 +91,7 @@ def graphs_page() -> rx.Component:
         rx.tabs.content(
             rx.hstack(
                 rx.vstack(
-                    rx.heading("Equations (y = f(x))", size="md"),
+                    rx.heading("Equations (y = f(x))", size="5"),
                     rx.foreach(
                         rx.Var.range(len(GraphingState.equations_2d)),
                         lambda i: rx.hstack(
@@ -120,7 +120,7 @@ def graphs_page() -> rx.Component:
         rx.tabs.content(
             rx.hstack(
                 rx.vstack(
-                    rx.heading("Equations (z = f(x, y))", size="md"),
+                    rx.heading("Equations (z = f(x, y))", size="5"),
                     rx.foreach(
                         rx.Var.range(len(GraphingState.equations_3d)),
                         lambda i: rx.hstack(

@@ -74,7 +74,7 @@ class UnitConverterState(rx.State):
 def unit_conversion_page() -> rx.Component:
     content = rx.card(
         rx.vstack(
-            rx.heading("Select Category", size="md"),
+            rx.heading("Select Category", size="5"),
             rx.select(UnitConverterState.categories, value=UnitConverterState.selected_category, on_change=UnitConverterState.on_category_change),
             rx.hstack(
                 rx.vstack(

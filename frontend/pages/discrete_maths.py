@@ -286,7 +286,7 @@ def discrete_maths_page() -> rx.Component:
             content=rx.vstack(
                 rx.hstack(
                     rx.vstack(
-                        rx.heading("Graph Input", size="md"),
+                        rx.heading("Graph Input", size="5"),
                         rx.text("Enter Adjacency List:", size="sm"),
                         rx.text_area(
                             value=DiscreteMathsState.graph_adj_list,
@@ -305,7 +305,7 @@ def discrete_maths_page() -> rx.Component:
                             rx.text(rx.cond(DiscreteMathsState.graph_is_directed, "Directed", "Undirected")),
                             spacing="2",
                         ),
-                        rx.heading("Analysis Options", size="md", margin_top="1em"),
+                        rx.heading("Analysis Options", size="5", margin_top="1em"),
                         create_analysis_checkboxes(),
                         rx.hstack(
                             rx.input(
@@ -328,7 +328,7 @@ def discrete_maths_page() -> rx.Component:
                         align_items="start",
                     ),
                     rx.vstack(
-                        rx.heading("Analysis Results", size="md"),
+                        rx.heading("Analysis Results", size="5"),
                         rx.cond(
                             DiscreteMathsState.graph_result,
                             render_graph_results(DiscreteMathsState.graph_result),

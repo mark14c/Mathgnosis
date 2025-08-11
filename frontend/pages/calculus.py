@@ -84,7 +84,7 @@ def calculus_page() -> rx.Component:
                             header="Differentiation",
                             content=rx.vstack(
                                 rx.vstack(
-                                    rx.heading("Partial Derivative", size="md"),
+                                    rx.heading("Partial Derivative", size="5"),
                                     rx.input(
                                         placeholder="e.g., x**2 + y**3",
                                         on_change=CalculusState.set_diff_function,
@@ -102,7 +102,7 @@ def calculus_page() -> rx.Component:
                                     width="100%",
                                 ),
                                 rx.vstack(
-                                    rx.heading("Gradient", size="md"),
+                                    rx.heading("Gradient", size="5"),
                                     rx.input(
                                         placeholder="e.g., x**2*y + sin(z)",
                                         on_change=CalculusState.set_grad_function,

@@ -67,7 +67,7 @@ def equations_page() -> rx.Component:
             rx.tabs.content(
                 rx.card(
                     rx.vstack(
-                        rx.heading("Polynomial Root Finder", size="md"),
+                        rx.heading("Polynomial Root Finder", size="5"),
                         rx.text("Enter coefficients in order of decreasing power (e.g., '1, -3, 2' for x^2 - 3x + 2)."),
                         rx.input(placeholder="Coefficients", value=EquationsState.poly_coeffs, on_change=EquationsState.set_poly_coeffs, style=style.input_style),
                         rx.button("Find Roots", on_click=EquationsState.solve_polynomial, style=style.button_style),
@@ -81,7 +81,7 @@ def equations_page() -> rx.Component:
             rx.tabs.content(
                 rx.card(
                     rx.vstack(
-                        rx.heading("Simultaneous Linear Equations (Ax = b)", size="md"),
+                        rx.heading("Simultaneous Linear Equations (Ax = b)", size="5"),
                         rx.text("Coefficient Matrix (A)"),
                         rx.text_area(placeholder="A Matrix", value=EquationsState.sim_a_matrix, on_change=EquationsState.set_sim_a_matrix, style=style.textarea_style),
                         rx.text("Constants Vector (b)"),
