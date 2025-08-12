@@ -5,7 +5,9 @@ from ..components.page_layout import template
 import httpx
 import json
 
-class MatricesState(rx.State):
+from ..state import State
+
+class MatricesState(State):
     matrix_inputs: list[str] = ["1, 2\n3, 4", "5, 6\n7, 8"]
     operation: str = "add"
     scalar_input: str = "2"
@@ -51,6 +53,7 @@ class MatricesState(rx.State):
                 if response.status_code == 200:
                     res_data = response.json()["result"]
                     self.result = json.dumps(res_data, indent=2)
+                    self.save_to_history("matrices", f"{self.operation}({self.matrix_inputs})", self.operation, self.result)
                 else:
                     self.error_message = f"Error: {response.text}"
 

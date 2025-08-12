@@ -5,7 +5,9 @@ from ..components.page_layout import template
 import httpx
 import json
 
-class DiscreteMathsState(rx.State):
+from ..state import State
+
+class DiscreteMathsState(State):
     # --- Number Theory ---
     nt_numbers_input: str = ""
     nt_modulo_input: str = ""
@@ -65,6 +67,7 @@ class DiscreteMathsState(rx.State):
                 
                 if response.status_code == 200:
                     self.nt_result = str(response.json()["result"])
+                    self.save_to_history("discrete_maths", f"{op}({self.nt_numbers_input or self.nt_modulo_input})", op, self.nt_result)
                 else:
                     self.error_message = f"Error: {response.text}"
             except Exception as e:
@@ -98,6 +101,7 @@ class DiscreteMathsState(rx.State):
 
                 if response.status_code == 200:
                     self.set_op_result = str(response.json()["result"])
+                    self.save_to_history("discrete_maths", f"{op}({self.set_inputs})", op, self.set_op_result)
                 else:
                     self.error_message = f"Error: {response.text}"
             except Exception as e:
@@ -120,6 +124,7 @@ class DiscreteMathsState(rx.State):
 
                 if response.status_code == 200:
                     self.bool_result = str(response.json()["result"])
+                    self.save_to_history("discrete_maths", f"{self.bool_operation}({self.bool_inputs})", self.bool_operation, self.bool_result)
                 else:
                     self.error_message = f"Error: {response.text}"
             except Exception as e:
@@ -146,6 +151,7 @@ class DiscreteMathsState(rx.State):
                 
                 if response.status_code == 200:
                     self.graph_result = response.json()["result"]
+                    self.save_to_history("discrete_maths", f"graph_analysis({self.graph_analyses})", "graph_analysis", json.dumps(self.graph_result))
                 else:
                     self.error_message = f"Error: {response.text}"
             except Exception as e:

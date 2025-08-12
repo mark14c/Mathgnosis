@@ -7,7 +7,9 @@ import json
 
 REGRESSION_MODELS = ["linear", "multiple_linear", "polynomial", "logistic", "lasso", "ridge"]
 
-class StatisticsState(rx.State):
+from ..state import State
+
+class StatisticsState(State):
     # --- Descriptive Stats ---
     desc_data1: str = "1, 2, 3, 4, 5, 6, 7, 8, 9"
     desc_data2: str = "2, 3, 4, 5, 6, 7, 8, 9, 10" # For concordance
@@ -37,6 +39,7 @@ class StatisticsState(rx.State):
                     resp = await client.post(f"{self.get_api_url()}/api/statistics/descriptive", json=payload)
                 if resp.status_code == 200:
                     self.desc_result = json.dumps(resp.json()["result"], indent=2)
+                    self.save_to_history("statistics", "descriptive_stats", f"data1: {self.desc_data1}, data2: {self.desc_data2}", self.desc_result)
                 else:
                     self.error_message = resp.text
             except Exception as e:
@@ -69,6 +72,7 @@ class StatisticsState(rx.State):
                     resp = await client.post(f"{self.get_api_url()}/api/statistics/regression", json=payload)
                 if resp.status_code == 200:
                     self.pred_result = json.dumps(resp.json()["result"], indent=2)
+                    self.save_to_history("statistics", f"regression: {self.pred_model}", f"X: {self.pred_x_data}, Y: {self.pred_y_data}", self.pred_result)
                 else:
                     self.error_message = resp.text
             except Exception as e:

@@ -5,7 +5,9 @@ from ..components.page_layout import template
 import httpx
 import json
 
-class EquationsState(rx.State):
+from ..state import State
+
+class EquationsState(State):
     # --- Polynomial Solver ---
     poly_coeffs: str = "1, -3, 2" # For x^2 - 3x + 2 = 0
     poly_result: str = ""
@@ -28,6 +30,7 @@ class EquationsState(rx.State):
                     resp = await client.post(f"{self.get_api_url()}/api/equations/solve_polynomial", json={"coefficients": coeffs})
                 if resp.status_code == 200:
                     self.poly_result = json.dumps(resp.json()["result"], indent=2)
+                    self.save_to_history("equations", f"solve_polynomial({self.poly_coeffs})", "solve_polynomial", self.poly_result)
                 else:
                     self.error_message = resp.text
             except Exception as e:
@@ -47,6 +50,7 @@ class EquationsState(rx.State):
                     resp = await client.post(f"{self.get_api_url()}/api/equations/solve_simultaneous", json=payload)
                 if resp.status_code == 200:
                     self.sim_result = json.dumps(resp.json()["result"], indent=2)
+                    self.save_to_history("equations", f"solve_simultaneous(A={self.sim_a_matrix}, b={self.sim_b_vector})", "solve_simultaneous", self.sim_result)
                 else:
                     self.error_message = resp.text
             except Exception as e:

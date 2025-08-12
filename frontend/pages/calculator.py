@@ -48,7 +48,7 @@ class CalculatorState(rx.State):
                         response.raise_for_status()
                         result = response.json()["result"]
                         self.display = str(result)
-                        self.get_state(HistoryState).add_latest_history(self.expression, "calculator", self.display)
+                        self.get_state(HistoryState).add_latest_history("calculator", self.expression, "calculator", self.display)
                         self.expression = str(result)
                 except httpx.HTTPStatusError as e:
                     self.display = "Error"
@@ -73,7 +73,7 @@ class CalculatorState(rx.State):
             self.expression = ""
 
     def save_to_history(self):
-        self.get_state(HistoryState).add_history(self.expression, "calculator", self.display)
+        self.get_state(HistoryState).add_history("calculator", self.expression, "calculator", self.display)
 
 
 def calculator_button(text: str, on_click, color_scheme="gray", variant="solid", size="4", **kwargs) -> rx.Component:

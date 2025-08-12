@@ -16,7 +16,9 @@ HYPOTHESIS_TESTS = [
     "t_test_1_sample", "t_test_2_sample", "chi_squared_test", "f_test_anova"
 ]
 
-class ProbabilityState(rx.State):
+from ..state import State
+
+class ProbabilityState(State):
     # --- Section Control ---
     active_section: str = "standard_distributions"
 
@@ -85,7 +87,9 @@ class ProbabilityState(rx.State):
                 }
                 async with httpx.AsyncClient() as client:
                     resp = await client.post(f"{self.get_api_url()}/api/probability/standard_distribution", json=payload)
-                if resp.status_code == 200: self.dist_result = str(resp.json()["result"])
+                if resp.status_code == 200: 
+                    self.dist_result = str(resp.json()["result"])
+                    self.save_to_history("probability", f"{self.dist_calc_type} for {self.dist_name}", f"params: {self.dist_params}, x1: {self.dist_x1}, x2: {self.dist_x2}", self.dist_result)
                 else: self.error_message = resp.text
             except Exception as e: self.error_message = str(e)
 
@@ -99,7 +103,9 @@ class ProbabilityState(rx.State):
                 table = [[float(c) for c in r] for r in self.joint_table]
                 async with httpx.AsyncClient() as client:
                     resp = await client.post(f"{self.get_api_url()}/api/probability/joint_distribution", json={"table": table})
-                if resp.status_code == 200: self.joint_result = json.dumps(resp.json()["result"], indent=2)
+                if resp.status_code == 200: 
+                    self.joint_result = json.dumps(resp.json()["result"], indent=2)
+                    self.save_to_history("probability", "joint_distribution", f"table: {self.joint_table}", self.joint_result)
                 else: self.error_message = resp.text
             except Exception as e: self.error_message = str(e)
 
@@ -117,7 +123,9 @@ class ProbabilityState(rx.State):
                 }
                 async with httpx.AsyncClient() as client:
                     resp = await client.post(f"{self.get_api_url()}/api/probability/custom_pdf", json=payload)
-                if resp.status_code == 200: self.custom_pdf_result = json.dumps(resp.json()["result"], indent=2)
+                if resp.status_code == 200: 
+                    self.custom_pdf_result = json.dumps(resp.json()["result"], indent=2)
+                    self.save_to_history("probability", "custom_pdf", f"function: {self.custom_pdf_str}, limits: [{self.custom_lower_limit}, {self.custom_upper_limit}]", self.custom_pdf_result)
                 else: self.error_message = resp.text
             except Exception as e: self.error_message = str(e)
 
@@ -137,7 +145,9 @@ class ProbabilityState(rx.State):
                 }
                 async with httpx.AsyncClient() as client:
                     resp = await client.post(f"{self.get_api_url()}/api/probability/hypothesis_testing", json=payload)
-                if resp.status_code == 200: self.test_result = json.dumps(resp.json()["result"], indent=2)
+                if resp.status_code == 200: 
+                    self.test_result = json.dumps(resp.json()["result"], indent=2)
+                    self.save_to_history("probability", f"{self.test_type}", f"data1: {self.test_data1}, data2: {self.test_data2}, alpha: {self.test_alpha}, mu: {self.test_mu}", self.test_result)
                 else: self.error_message = resp.text
             except Exception as e: self.error_message = str(e)
 

@@ -5,7 +5,9 @@ from ..components.page_layout import template
 import httpx
 import json
 
-class VectorsState(rx.State):
+from ..state import State
+
+class VectorsState(State):
     vector_inputs: list[str] = ["1, 2, 3", "4, 5, 6"]
     matrix_input: str = "1, 0, 0\n0, 1, 0\n0, 0, 1"
     scalar_input: str = "3"
@@ -44,6 +46,7 @@ class VectorsState(rx.State):
                 
                 if resp.status_code == 200:
                     self.result = json.dumps(resp.json()["result"], indent=2)
+                    self.save_to_history("vectors", f"{self.operation}({self.vector_inputs})", self.operation, self.result)
                 else:
                     self.error_message = f"Error: {resp.text}"
             except Exception as e:

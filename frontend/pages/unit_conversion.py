@@ -4,7 +4,9 @@ from .. import style
 from ..components.page_layout import template
 import httpx
 
-class UnitConverterState(rx.State):
+from ..state import State
+
+class UnitConverterState(State):
     # --- State Variables ---
     all_units: dict[str, list[str]] = {}
     selected_category: str = "Length"
@@ -59,6 +61,7 @@ class UnitConverterState(rx.State):
                     resp = await client.post(f"{self.get_api_url()}/api/unit_converter/convert", json=payload)
                 if resp.status_code == 200:
                     self.result = f"{resp.json()['result']:.6g}"
+                    self.save_to_history("unit_conversion", f"{self.input_value} {self.from_unit} to {self.to_unit}", "convert", self.result)
                     self.error_message = ""
                 else:
                     self.error_message = resp.text

@@ -2,9 +2,9 @@ import reflex as rx
 from ..components.sidebar import sidebar, SidebarState
 from .. import style
 import httpx
-from ..state import HistoryState
+from ..state import State, HistoryState
 
-class CalculusState(rx.State):
+class CalculusState(State):
     # Differentiation
     diff_function: str = ""
     diff_variables: str = ""
@@ -36,7 +36,7 @@ class CalculusState(rx.State):
                 
                 if response.status_code == 200:
                     self.diff_result = str(response.json()["result"])
-                    self.get_state(HistoryState).add_latest_history(f"differentiate({self.diff_function}) wrt ({self.diff_variables})", "calculus", self.diff_result)
+                    self.save_to_history("calculus", f"differentiate({self.diff_function}) wrt ({self.diff_variables})", "calculus", self.diff_result)
                 else:
                     self.error_message = f"Error: {response.json()['detail']}"
 
@@ -64,7 +64,7 @@ class CalculusState(rx.State):
 
                 if response.status_code == 200:
                     self.grad_result = response.json()["result"]
-                    self.get_state(HistoryState).add_latest_history(f"gradient({self.grad_function})", "calculus", self.grad_result)
+                    self.save_to_history("calculus", f"gradient({self.grad_function})", "calculus", self.grad_result)
                 else:
                     self.error_message = f"Error: {response.json()['detail']}"
 
@@ -73,12 +73,6 @@ class CalculusState(rx.State):
     
     def get_gradient(self):
         return rx.background(self._get_gradient)
-
-    def save_diff_to_history(self):
-        self.get_state(HistoryState).add_history(f"differentiate({self.diff_function}) wrt ({self.diff_variables})", "calculus", self.diff_result)
-
-    def save_grad_to_history(self):
-        self.get_state(HistoryState).add_history(f"gradient({self.grad_function})", "calculus", self.grad_result)
 
 @rx.page(route="/calculus", title="Calculus")
 def calculus_page() -> rx.Component:
@@ -107,7 +101,6 @@ def calculus_page() -> rx.Component:
                                     rx.button("Calculate", on_click=CalculusState.get_derivative, style=style.button_style),
                                     rx.text("Result:", weight="bold"),
                                     rx.code(CalculusState.diff_result, variant="surface"),
-                                    rx.button("Save to History", on_click=CalculusState.save_diff_to_history, style=style.button_style),
                                     spacing="4",
                                     width="100%",
                                 ),
@@ -121,7 +114,6 @@ def calculus_page() -> rx.Component:
                                     rx.button("Calculate Gradient", on_click=CalculusState.get_gradient, style=style.button_style),
                                     rx.text("Result (Gradient Vector):", weight="bold"),
                                     rx.code(CalculusState.grad_result, variant="surface"),
-                                    rx.button("Save to History", on_click=CalculusState.save_grad_to_history, style=style.button_style),
                                     spacing="4",
                                     width="100%",
                                 ),
