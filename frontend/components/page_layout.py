@@ -13,7 +13,6 @@ def template(title: str, content: rx.Component) -> rx.Component:
                     padding="2em",
                     border="1px solid #ddd",
                     border_radius="15px",
-                    background_color="rgba(255, 255, 255, 0.8)",
                     box_shadow="lg",
                 ),
                 style=style.card_style
@@ -22,8 +21,5 @@ def template(title: str, content: rx.Component) -> rx.Component:
             width="100%",
             margin_left=rx.cond(SidebarState.is_collapsed, "60px", "250px"),
             transition="margin-left 0.3s ease-in-out",
-            background_image="url('https://www.free-css.com/assets/files/free-css-templates/preview/page289/ask-me/assets/images/page-heading-bg.jpg')",
-            background_size="cover",
         ),
-        style=style.base_style,
     )

@@ -1,5 +1,6 @@
 import reflex as rx
-from frontend.style import PRIMARY_COLOR, app_icon_style
+from frontend.style import PRIMARY_COLOR, app_icon_style, TEXT_COLOR
+from ..state import State
 
 class SidebarState(rx.State):
     """The state for the sidebar."""
@@ -32,7 +33,7 @@ def sidebar():
         rx.vstack(
             rx.hstack(
                 rx.image(src="/app_icon.png", style=app_icon_style),
-                rx.heading("Mathgnosis", size="5", color="black"),
+                rx.heading("Mathgnosis", size="5", color=TEXT_COLOR),
                 rx.spacer(),
                 rx.button(
                     rx.icon(tag="arrow_left", size=20),

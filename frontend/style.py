@@ -1,9 +1,16 @@
 import reflex as rx
 
 # Theme colors
-PRIMARY_COLOR = "#F0F8FF"  # AliceBlue, a light blue
-SECONDARY_COLOR = "#FFFFFF"  # White
-TEXT_COLOR = "#000000"  # Black
+def color_mode_switch(light, dark):
+    return rx.cond(
+        State.color_mode == "light",
+        light,
+        dark
+    )
+
+PRIMARY_COLOR = color_mode_switch("#F0F8FF", "#0d1117")
+SECONDARY_COLOR = color_mode_switch("#FFFFFF", "#161b22")
+TEXT_COLOR = color_mode_switch("#000000", "#FFFFFF")
 
 # Base styles
 base_style = {

@@ -3,6 +3,13 @@ from Mathgnosis.models.history import History, LatestHistory
 
 class State(rx.State):
     """The base state for the app."""
+    color_mode: str = "light"
+
+    def toggle_color_mode(self):
+        if self.color_mode == "light":
+            self.color_mode = "dark"
+        else:
+            self.color_mode = "light"
     
     def save_to_history(self, page, input, operation, output):
         with rx.session() as session:
