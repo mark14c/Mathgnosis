@@ -2,6 +2,7 @@ import reflex as rx
 import httpx
 from ..components.sidebar import sidebar, SidebarState
 from .. import style
+from ..state import HistoryState
 
 class CalculatorState(rx.State):
     display: str = "0"
@@ -47,6 +48,7 @@ class CalculatorState(rx.State):
                         response.raise_for_status()
                         result = response.json()["result"]
                         self.display = str(result)
+                        self.get_state(HistoryState).add_latest_history(self.expression, "calculator", self.display)
                         self.expression = str(result)
                 except httpx.HTTPStatusError as e:
                     self.display = "Error"
@@ -69,6 +71,9 @@ class CalculatorState(rx.State):
         else:
             self.display = "0"
             self.expression = ""
+
+    def save_to_history(self):
+        self.get_state(HistoryState).add_history(self.expression, "calculator", self.display)
 
 
 def calculator_button(text: str, on_click, color_scheme="gray", variant="solid", size="4", **kwargs) -> rx.Component:
@@ -169,6 +174,7 @@ def calculator_page() -> rx.Component:
                         collapsible=True,
                         width="100%",
                     ),
+                    rx.button("Save to History", on_click=CalculatorState.save_to_history, color_scheme="blue", margin_top="10px"),
                     padding="2em",
                     border="1px solid #ddd",
                     border_radius="15px",

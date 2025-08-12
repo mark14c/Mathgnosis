@@ -3,6 +3,7 @@ from ..components.sidebar import sidebar, SidebarState
 from .. import style
 from ..components.page_layout import template
 import httpx
+from ..state import HistoryState
 
 class ComplexState(rx.State):
     # Polar to Rectangular
@@ -28,6 +29,7 @@ class ComplexState(rx.State):
                     )
                 if response.status_code == 200:
                     self.rectangular_output = response.json()["result"]
+                    self.get_state(HistoryState).add_latest_history(f"polar_to_rectangular({self.polar_input})", "complex", self.rectangular_output)
                 else:
                     self.rectangular_output = f"Error: {response.text}"
             except Exception:
@@ -45,6 +47,7 @@ class ComplexState(rx.State):
                     )
                 if response.status_code == 200:
                     self.polar_output = response.json()["result"]
+                    self.get_state(HistoryState).add_latest_history(f"rectangular_to_polar({self.rectangular_input})", "complex", self.polar_output)
                 else:
                     self.polar_output = f"Error: {response.text}"
             except Exception as e:
@@ -63,6 +66,7 @@ class ComplexState(rx.State):
                     )
                 if response.status_code == 200:
                     self.arithmetic_result = response.json()["result"]
+                    self.get_state(HistoryState).add_latest_history(f"{self.operation}({self.complex_numbers_input})", "complex", self.arithmetic_result)
                 else:
                     self.arithmetic_result = f"Error: {response.text}"
             except Exception as e:
@@ -70,6 +74,15 @@ class ComplexState(rx.State):
     
     def calculate_arithmetic(self):
         return rx.background(self._calculate_arithmetic)
+
+    def save_polar_to_rect_history(self):
+        self.get_state(HistoryState).add_history(f"polar_to_rectangular({self.polar_input})", "complex", self.rectangular_output)
+
+    def save_rect_to_polar_history(self):
+        self.get_state(HistoryState).add_history(f"rectangular_to_polar({self.rectangular_input})", "complex", self.polar_output)
+
+    def save_arithmetic_history(self):
+        self.get_state(HistoryState).add_history(f"{self.operation}({self.complex_numbers_input})", "complex", self.arithmetic_result)
 
 
 @rx.page(route="/complex", title="Complex Numbers")
@@ -93,6 +106,7 @@ def complex_page() -> rx.Component:
                         rx.button("Convert", on_click=ComplexState.polar_to_rectangular, width="100%", style=style.button_style),
                         rx.text("Result:", weight="bold"),
                         rx.code(ComplexState.rectangular_output, variant="surface"),
+                        rx.button("Save to History", on_click=ComplexState.save_polar_to_rect_history, style=style.button_style),
                         spacing="4",
                     ),
                     width="100%",
@@ -109,6 +123,7 @@ def complex_page() -> rx.Component:
                         rx.button("Convert", on_click=ComplexState.rectangular_to_polar, width="100%", style=style.button_style),
                         rx.text("Result:", weight="bold"),
                         rx.code(ComplexState.polar_output, variant="surface"),
+                        rx.button("Save to History", on_click=ComplexState.save_rect_to_polar_history, style=style.button_style),
                         spacing="4",
                     ),
                     width="100%",
@@ -137,6 +152,7 @@ def complex_page() -> rx.Component:
                     rx.button("Calculate", on_click=ComplexState.calculate_arithmetic, width="100%", style=style.button_style),
                     rx.text("Result:", weight="bold"),
                     rx.code(ComplexState.arithmetic_result, variant="surface"),
+                    rx.button("Save to History", on_click=ComplexState.save_arithmetic_history, style=style.button_style),
                     spacing="4",
                 ),
                 width="100%",
