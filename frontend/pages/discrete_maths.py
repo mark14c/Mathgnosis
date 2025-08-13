@@ -1,4 +1,5 @@
 import reflex as rx
+from reflex.utils.format import json_dumps
 from ..components.sidebar import sidebar, SidebarState
 from .. import style
 from ..components.page_layout import template
@@ -43,6 +44,14 @@ class DiscreteMathsState(State):
 
     def handle_set_input_change(self, value: str, index: int):
         self.set_inputs[index] = value
+
+    def toggle_analysis(self, algo: str, checked: bool):
+        if checked:
+            if algo not in self.graph_analyses:
+                self.graph_analyses.append(algo)
+        else:
+            if algo in self.graph_analyses:
+                self.graph_analyses.remove(algo)
 
     # --- API Calls ---
     async def _run_number_theory_op(self, op: str):
@@ -167,27 +176,24 @@ def create_analysis_checkboxes() -> rx.Component:
         "kruskals", "kahns", "tarjans", "warshall_transitive_closure", 
         "max_flow_min_cut", "bipartite_check", "vertex_cover", "independent_set"
     ]
-    return rx.checkbox_group(
-        rx.grid(
-            *[
-                rx.checkbox(algo, value=algo)
-                for algo in algorithms
-            ],
-            columns="3",
-            spacing="1",
-            width="100%",
-        ),
-        value=DiscreteMathsState.graph_analyses,
-        on_change=DiscreteMathsState.set_graph_analyses,
+    return rx.grid(
+        *[
+            rx.checkbox(algo, value=algo, on_change=lambda checked, algo=algo: DiscreteMathsState.toggle_analysis(algo, checked))
+            for algo in algorithms
+        ],
+        columns="3",
+        spacing="1",
+        width="100%",
     )
 
 def render_graph_results(results: dict) -> rx.Component:
     return rx.vstack(
-        *[
-            rx.vstack(
-                rx.heading(key.replace('_', ' ').title(), size="sm"),
+        rx.foreach(
+            results,
+            lambda item: rx.vstack(
+                rx.heading(item[0].replace('_', ' ').title(), size="5"),
                 rx.code_block(
-                    json.dumps(value, indent=2), 
+                    json_dumps(item[1], indent=2),
                     language="json",
                     width="100%",
                     max_height="300px",
@@ -196,8 +202,7 @@ def render_graph_results(results: dict) -> rx.Component:
                 align_items="start",
                 width="100%",
             )
-            for key, value in results.items()
-        ],
+        ),
         spacing="4",
         width="100%",
     )
@@ -211,14 +216,14 @@ def discrete_maths_page() -> rx.Component:
             content=rx.vstack(
                 rx.card(
                     rx.vstack(
-                        rx.heading("GCD, LCM, Prime Factorization", size="sm"),
+                        rx.heading("GCD, LCM, Prime Factorization", size="5"),
                         rx.input(placeholder="Numbers (e.g., 48, 18)", on_change=DiscreteMathsState.set_nt_numbers_input, style=style.input_style),
                         rx.hstack(
                             rx.button("GCD", on_click=lambda: DiscreteMathsState.run_number_theory_op("gcd"), style=style.button_style),
                             rx.button("LCM", on_click=lambda: DiscreteMathsState.run_number_theory_op("lcm"), style=style.button_style),
                             rx.button("Factorize", on_click=lambda: DiscreteMathsState.run_number_theory_op("prime_factorization"), style=style.button_style),
                         ),
-                        rx.heading("Modulo", size="sm", margin_top="1em"),
+                        rx.heading("Modulo", size="5", margin_top="1em"),
                         rx.input(placeholder="Dividend, Divisor (e.g., 10, 3)", on_change=DiscreteMathsState.set_nt_modulo_input, style=style.input_style),
                         rx.button("Modulo", on_click=lambda: DiscreteMathsState.run_number_theory_op("modulo"), style=style.button_style),
                         rx.text("Result:", weight="bold", margin_top="1em"),
@@ -234,7 +239,7 @@ def discrete_maths_page() -> rx.Component:
             content=rx.vstack(
                 rx.card(
                     rx.vstack(
-                        rx.heading("Enter Sets", size="sm"),
+                        rx.heading("Enter Sets", size="5"),
                         rx.text("Use comma-separated values (e.g., 1,2,3) or list format (e.g., [1, 2, \"a\"])"),
                         rx.foreach(
                             DiscreteMathsState.set_inputs,
@@ -268,7 +273,7 @@ def discrete_maths_page() -> rx.Component:
             header="Boolean Logic",
             content=rx.card(
                 rx.vstack(
-                    rx.heading("Boolean Inputs", size="sm"),
+                    rx.heading("Boolean Inputs", size="5"),
                     rx.text("Enter 'true' or 'false', comma-separated."),
                     rx.input(
                         value=DiscreteMathsState.bool_inputs,
@@ -293,7 +298,7 @@ def discrete_maths_page() -> rx.Component:
                 rx.hstack(
                     rx.vstack(
                         rx.heading("Graph Input", size="5"),
-                        rx.text("Enter Adjacency List:", size="sm"),
+                        rx.text("Enter Adjacency List:", size="5"),
                         rx.text_area(
                             value=DiscreteMathsState.graph_adj_list,
                             on_change=DiscreteMathsState.set_graph_adj_list,
@@ -303,7 +308,7 @@ def discrete_maths_page() -> rx.Component:
                             style=style.textarea_style
                         ),
                         rx.hstack(
-                            rx.text("Graph Type:", size="sm"),
+                            rx.text("Graph Type:", size="5"),
                             rx.switch(
                                 is_checked=DiscreteMathsState.graph_is_directed,
                                 on_change=DiscreteMathsState.set_graph_is_directed,
@@ -352,7 +357,7 @@ def discrete_maths_page() -> rx.Component:
                 rx.cond(
                     DiscreteMathsState.error_message,
                     rx.callout.root(
-                        rx.callout.icon(rx.icon("alert-triangle")),
+                        rx.callout.icon(rx.icon("alert_circle")),
                         rx.callout.text(DiscreteMathsState.error_message),
                         color_scheme="red", role="alert",
                     ),

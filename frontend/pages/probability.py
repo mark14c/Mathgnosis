@@ -190,13 +190,21 @@ def probability_page() -> rx.Component:
                         rx.input(placeholder="Rows", value=str(ProbabilityState.joint_rows), on_change=lambda v: ProbabilityState.on_joint_table_dim_change(v, True), style=style.input_style),
                         rx.input(placeholder="Cols", value=str(ProbabilityState.joint_cols), on_change=lambda v: ProbabilityState.on_joint_table_dim_change(v, False), style=style.input_style),
                     ),
-                    rx.vstack(*[
-                        rx.hstack(*[
-                            rx.input(value=ProbabilityState.joint_table[r][c], on_change=lambda v, r=r, c=c: ProbabilityState.on_joint_table_cell_change(v, r, c), style=style.input_style)
-                            for c in range(ProbabilityState.joint_cols)
-                        ])
-                        for r in range(ProbabilityState.joint_rows)
-                    ]),
+                    rx.vstack(
+                        rx.foreach(
+                            rx.Var.range(ProbabilityState.joint_rows),
+                            lambda r: rx.hstack(
+                                rx.foreach(
+                                    rx.Var.range(ProbabilityState.joint_cols),
+                                    lambda c: rx.input(
+                                        value=ProbabilityState.joint_table[r][c],
+                                        on_change=lambda v, r=r, c=c: ProbabilityState.on_joint_table_cell_change(v, r, c),
+                                        style=style.input_style
+                                    )
+                                )
+                            )
+                        )
+                    ),
                     rx.button("Calculate Marginals", on_click=ProbabilityState.run_joint_calc, style=style.button_style),
                     rx.code_block(ProbabilityState.joint_result, width="100%"),
                 ), value="joint"
@@ -229,7 +237,7 @@ def probability_page() -> rx.Component:
         ),
         rx.cond(
             ProbabilityState.error_message,
-            rx.callout.root(rx.callout.icon(rx.icon("alert-triangle")), rx.callout.text(ProbabilityState.error_message), color_scheme="red", role="alert"),
+            rx.callout.root(rx.callout.icon(rx.icon("alert_circle")), rx.callout.text(ProbabilityState.error_message), color_scheme="red", role="alert"),
         ),
     )
     return template(title="Probability", content=content)

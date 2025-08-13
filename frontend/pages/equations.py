@@ -75,7 +75,7 @@ def equations_page() -> rx.Component:
                         rx.text("Enter coefficients in order of decreasing power (e.g., '1, -3, 2' for x^2 - 3x + 2)."),
                         rx.input(placeholder="Coefficients", value=EquationsState.poly_coeffs, on_change=EquationsState.set_poly_coeffs, style=style.input_style),
                         rx.button("Find Roots", on_click=EquationsState.solve_polynomial, style=style.button_style),
-                        rx.heading("Solutions for x", size="sm", margin_top="1em"),
+                        rx.heading("Solutions for x", size="5", margin_top="1em"),
                         rx.code_block(EquationsState.poly_result, width="100%"),
                         align_items="start", spacing="3",
                     )
@@ -91,7 +91,7 @@ def equations_page() -> rx.Component:
                         rx.text("Constants Vector (b)"),
                         rx.input(placeholder="b Vector", value=EquationsState.sim_b_vector, on_change=EquationsState.set_sim_b_vector, style=style.input_style),
                         rx.button("Solve", on_click=EquationsState.solve_simultaneous, style=style.button_style),
-                        rx.heading("Solution Vector (x)", size="sm", margin_top="1em"),
+                        rx.heading("Solution Vector (x)", size="5", margin_top="1em"),
                         rx.code_block(EquationsState.sim_result, width="100%"),
                         align_items="start", spacing="3",
                     )
@@ -101,7 +101,7 @@ def equations_page() -> rx.Component:
         ),
         rx.cond(
             EquationsState.error_message,
-            rx.callout.root(rx.callout.icon(rx.icon("alert-triangle")), rx.callout.text(EquationsState.error_message), color_scheme="red", role="alert"),
+            rx.callout.root(rx.callout.icon(rx.icon("alert_circle")), rx.callout.text(EquationsState.error_message), color_scheme="red", role="alert"),
         ),
     )
     return template(title="Equation Solvers", content=content)

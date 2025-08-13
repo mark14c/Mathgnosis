@@ -15,6 +15,5 @@ def settings_page() -> rx.Component:
                 on_click=State.toggle_color_mode,
             ),
         ),
-        rx.text("This is the settings page. You can add your settings components here."),
     )
     return template(title="Settings", content=content)
